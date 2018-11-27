@@ -48,23 +48,43 @@ glass %>%
 # correlations, total and within type
 
 (glass %>% 
-  select(-id,-Type) %>%
-  cor(method = "spearman") %>%
-  ggcorrplot::ggcorrplot(method = "circle") + 
-  ggtitle("Total")) %>%
+    select(-id,-Type) %>%
+    cor(method = "spearman") %>%
+    ggcorrplot::ggcorrplot(method = "circle") + 
+    ggtitle("Total")) %>%
   ggsave(plot = ., filename = "corr_total.png",height=8,width=8)
 
 glass %>% distinct(Type) %>% pull(Type) %>%
   purrr::map( ~ (glass %>%
-                filter(Type == .x) %>%
-                select(-id,-Type) %>%
-                cor(method="spearman") %>%
-                ggcorrplot::ggcorrplot(method = "circle") +
-                  ggtitle(paste0("corr_",.x))) %>%
+                   filter(Type == .x) %>%
+                   select(-id,-Type) %>%
+                   cor(method="spearman") %>%
+                   ggcorrplot::ggcorrplot(method = "circle") +
+                   ggtitle(paste0("corr_",.x))) %>%
                 ggsave(plot = .,
                        filename = paste0("corr_",.x,".png"),
                        height = 8,
                        width = 8))
-  
 
-              
+# pre process the data: scale and centre predictors, and BoxCox to remove skewness 
+
+PredictorNames <- setdiff(names(glass),c("id","Type"))
+
+glassData <- caret::preProcess(glass %>% as.data.frame,
+                               method = list(
+                                 BoxCox = PredictorNames,
+                                 center = PredictorNames,
+                                 scale = PredictorNames)
+)
+
+# just for kicks, how good would PCA be ? 
+
+glassDataPCA <- caret::preProcess(glass %>% as.data.frame,
+                                  method = list(
+                                    BoxCox = PredictorNames,
+                                    center = PredictorNames,
+                                    scale = PredictorNames,
+                                    pca = PredictorNames)
+)
+
+# need 7 for 95%... 
