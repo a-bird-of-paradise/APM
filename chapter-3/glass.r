@@ -77,6 +77,10 @@ glassData <- caret::preProcess(glass %>% as.data.frame,
                                  scale = PredictorNames)
 )
 
+# nothing near zero (i.e. would normally want to drop any of these)
+
+caret::nearZeroVar(glass)
+
 # just for kicks, how good would PCA be ? 
 
 glassDataPCA <- caret::preProcess(glass %>% as.data.frame,
