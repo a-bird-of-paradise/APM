@@ -2,13 +2,14 @@ library(tidyverse)
 library(e1071)
 library(ggcorrplot)
 library(mlbench)
+library(caret)
 data("Soybean")
 
 setdiff(names(Soybean),"Class") %>%
   map(~ (ggplot(data = Soybean,
-               aes(x=!!sym(.x),
-                   fill = Class)) + 
-        geom_histogram(stat="count", position = "stack")) %>%
+                aes(x=!!sym(.x),
+                    fill = Class)) + 
+           geom_histogram(stat="count", position = "stack")) %>%
         ggsave(plot = .,
                filename = paste0("soybean_hist_",.x,".png"),
                width = 8,
@@ -77,5 +78,26 @@ Soybean %>% filter(mycelium != 0) # remove this - other factors seem better
 remove.predictors <- c("mycelium")
 
 # now NA as a factor level is itself OK - so no need to fill in
-# but could use dummy vars to make metric and then knn from there to fill in...
-                  
+# promote NA to its own level and make dummy vars 
+# also some "ordinal" factors are really nominal in disguise
+# so demote to normal factor to avoid extracting polynomial predictors
+
+nominal.factors <- c("plant.stand","precip","temp","germ","leaf.size")
+
+Soybean_P <- Soybean %>%
+  as.tibble %>%
+  mutate_at(vars(nominal.factors), as.integer) %>%
+  mutate_at(vars(nominal.factors), as.factor) %>%
+  mutate_if(is.factor,addNA) %>%
+  select(-remove.predictors)
+
+Soybean_Data <- Soybean_P %>%
+  select(Class) %>%
+  bind_cols(
+    predict(caret::dummyVars( Class ~ ., data = Soybean_P),
+            newdata = Soybean_P) %>% 
+      as.tibble)
+
+# now NA is treated as its own factor level
+# because NA is predictive in some circumstances
+# so could use e.g. trees to model this 
