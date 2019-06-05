@@ -70,3 +70,4 @@ summary(lm_mod)
 
 broom::augment(lm_mod)
 broom::glance(lm_mod)
+
