@@ -2,9 +2,8 @@ library(tidyverse)
 library(caret)
 library(AppliedPredictiveModeling)
 data("ChemicalManufacturingProcess")
-ChemicalManufacturingProcess
 
-set.seed(666)
+set.seed(918273645)
 
 Predictors <- ChemicalManufacturingProcess %>% select(-Yield)
 Response <- ChemicalManufacturingProcess %>% pull(Yield)
@@ -45,3 +44,24 @@ data %>%
   geom_line()+
   facet_grid(key ~ .,scales="free")+
   scale_x_continuous(limits = c(1,10), breaks = 1:10)
+
+wanted_rows <- data %>%
+  group_by(source) %>%
+  filter(key == "Rsquared") %>%
+  filter(value==max(value)) %>%
+  select(ncomp,source) %>%
+  ungroup
+
+data %>%
+  inner_join(wanted_rows,
+             by=c("ncomp","source")) %>%
+  spread(key=key,value=value) %>%
+  mutate(threshold = Rsquared - RsquaredSE) %>%
+  select(source,threshold) %>%
+  inner_join(data,
+             by = c("source")) %>%
+  filter(value >= threshold & key == "Rsquared") %>%
+  group_by(source) %>%
+  filter(ncomp == min(ncomp)) %>%
+  ungroup %>%
+  select(source,ncomp)
