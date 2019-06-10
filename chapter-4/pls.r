@@ -37,13 +37,19 @@ data <- x$results %>%
   ) %>%
     mutate(source = "book")) %>%
   gather(key=key,value=value,-source,-ncomp)
-  
+
 data %>%  
   ggplot(aes(x=ncomp,y=value,colour=source))+
   geom_point()+
   geom_line()+
   facet_grid(key ~ .,scales="free")+
-  scale_x_continuous(limits = c(1,10), breaks = 1:10)
+  scale_x_continuous(limits = c(1,10), breaks = 1:10) -> theplot
+
+ggsave(filename = "pls.png",
+       width = 10,
+       height = 8,
+       dpi = 100,
+       plot = theplot)
 
 wanted_rows <- data %>%
   group_by(source) %>%
