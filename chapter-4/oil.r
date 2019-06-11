@@ -45,7 +45,26 @@ resample_caret_plot <- caret::createDataPartition(oilType, times = 10, p = 60/96
   ggtitle("caret resample")
 
 ggsave(plot = resample_caret_plot,
-       filename = "rresample_caret_plot.png",
+       filename = "resample_caret_plot.png",
        width = 5,
        height = 4,
        dpi = 100)
+
+prob_invest <- expand.grid(seq(0.1,1.0,by=0.1),1:100) %>%
+  as.tibble %>%
+  rename(probs = Var1, samples = Var2) %>%
+  mutate(successes = floor(probs * samples),
+         newcol = purrr::map2(successes,samples,binom.test)) %>%
+  mutate(newcol = purrr::map(newcol,~ data.frame(y=.x$conf.int, 
+                                                 idx = c("lb","ub")))) %>%
+  unnest %>%
+  ggplot(aes(x=samples,y=y,colour=idx,group=idx))+
+  geom_line()+
+  facet_wrap(~probs)+
+  geom_hline(aes(yintercept = probs)) 
+
+  ggsave(plot = prob_invest,
+         filename = "prob_invest.png",
+         width = 8,
+         height = 6,
+         dpi = 100)

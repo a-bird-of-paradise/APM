@@ -20,4 +20,8 @@ Caret sample: ![caret](resample_caret_plot.png)
 
 Data size is very small so we have to be careful in evaluating performance. A single test set would be problematic. This indicates something like repeated cross validation to investigate performance. Perhaps even leave-one-out cross validation if computationally tractable. 
 
+Another investigation is how confidence intervals around the crude sample probability of success varies. For example, we have 100 samples and get a crude estimate of 80% success. This could actually mean a large number of probabilities on a 95% confidence interval basis. Any of the plots below where samples = 100 and y = 0.8 are within the lower and upper bounds could be a candidate for the actual probability!
+
+![confidence intervals](prob_invest.png)
+
 
