@@ -46,8 +46,8 @@ data %>%
   scale_x_continuous(limits = c(1,10), breaks = 1:10) -> theplot
 
 ggsave(filename = "pls.png",
-       width = 10,
-       height = 8,
+       width = 5,
+       height = 4,
        dpi = 100,
        plot = theplot)
 
