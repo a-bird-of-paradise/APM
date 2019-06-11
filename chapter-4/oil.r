@@ -50,7 +50,7 @@ ggsave(plot = resample_caret_plot,
        height = 4,
        dpi = 100)
 
-prob_invest <- expand.grid(seq(0.1,1.0,by=0.1),1:100) %>%
+prob_invest <- expand.grid(seq(0.1,1.0,by=0.1),1:1000) %>%
   as.tibble %>%
   rename(probs = Var1, samples = Var2) %>%
   mutate(successes = floor(probs * samples),
@@ -61,7 +61,8 @@ prob_invest <- expand.grid(seq(0.1,1.0,by=0.1),1:100) %>%
   ggplot(aes(x=samples,y=y,colour=idx,group=idx))+
   geom_line()+
   facet_wrap(~probs)+
-  geom_hline(aes(yintercept = probs)) 
+  geom_hline(aes(yintercept = probs)) +
+  scale_x_log10()
 
   ggsave(plot = prob_invest,
          filename = "prob_invest.png",
