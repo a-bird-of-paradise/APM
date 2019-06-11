@@ -14,9 +14,7 @@ Given choice of modelled CIs - would go for SVM. Mean from Random Forest is bett
 
 The difference between base R and caret resampling techniques is very clear - i.e., `caret::createDataPartition` is much better unless we know why a true random sample is better. 
 
-base R sample:
-![base R](resample_base_r_plot.png)
+base R sample: ![base R](resample_base_r_plot.png)
 
-Caret sample:
-![caret](resample_caret_plot.png)
+Caret sample: ![caret](resample_caret_plot.png)
 
