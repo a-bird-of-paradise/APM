@@ -48,4 +48,22 @@ Ridge: ![Ridge](kcv_ridge_plot.png)
 
 Elastic net: ![Enet](kcv_enet_plot.png)
 
+Applying the models to the held out validation set gives the following estimates of performance: 
 
+|id    |     RMSE|  Rsquared|      MAE|
+|:-----|--------:|---------:|--------:|
+|enet  | 2.457840| 0.9641659| 1.638748|
+|lasso | 2.423299| 0.9651549| 1.631413|
+|lm    | 3.803016| 0.9209281| 2.561548|
+|pls   | 2.959833| 0.9487768| 1.827181|
+|ridge | 2.403127| 0.9657451| 1.649992|
+
+From the above looks like ridge regression gives the best performance although could go with elastic net or ridge. PLS and LM have slightly too poor performance at high realisations.
+
+![caret](caret_plot.png) 
+
+Linear regression gives huge parameter estimates: ![linear](coef_plot_lm.png)
+
+Lasso: ![lasso](coef_plot_lasso.png)
+
+Ridge: ![ridge](coef_plot_ridge.png) 
