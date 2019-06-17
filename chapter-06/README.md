@@ -58,7 +58,8 @@ Applying the models to the held out validation set gives the following estimates
 |pls   | 2.959833| 0.9487768| 1.827181|
 |ridge | 2.403127| 0.9657451| 1.649992|
 
-From the above looks like ridge regression gives the best performance although could go with elastic net or ridge. PLS and LM have slightly too poor performance at high realisations.
+From the above looks like ridge regression gives the best performance although could go with elastic net or lasso. 
+PLS and LM have slightly too poor performance at high realisations.
 
 ![caret](caret_plot.png) 
 
@@ -67,3 +68,5 @@ Linear regression gives huge parameter estimates: ![linear](coef_plot_lm.png)
 Lasso: ![lasso](coef_plot_lasso.png)
 
 Ridge: ![ridge](coef_plot_ridge.png) 
+
+So to keep the parameter estimates reasonable I'd go with lasso here as it has many coeffs set to zero improving robustness. 
