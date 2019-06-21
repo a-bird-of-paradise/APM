@@ -70,3 +70,30 @@ Lasso: ![lasso](coef_plot_lasso.png)
 Ridge: ![ridge](coef_plot_ridge.png) 
 
 So to keep the parameter estimates reasonable I'd go with lasso here as it has many coeffs set to zero improving robustness. 
+
+# 6.2 
+
+Training some models and applying them to the test data gives the following:
+
+![models](6.2/prediction_plot.png)
+
+None of them look especially wonderful. Log space is a bit better:
+
+![logmodels](6.2/prediction_plot_log.png)
+
+We can compare statistics too: 
+
+![stats](6.2/compare_plot.png)
+
+|model |     RMSE|  Rsquared|       MAE|what     |
+|:-----|--------:|---------:|---------:|:--------|
+|Ridge | 13.99264| 0.3818977| 10.082951|Training |
+|Ridge | 10.31435| 0.5975644|  8.380650|Testing  |
+|PLS   | 12.35496| 0.4290915|  9.361115|Training |
+|PLS   | 10.48525| 0.5684578|  8.535680|Testing  |
+|lasso | 11.22388| 0.5188240|  8.147752|Training |
+|lasso | 11.84277| 0.4249398|  9.186689|Testing  |
+|ENet  | 11.10847| 0.5182363|  8.111790|Training |
+|ENet  | 11.45635| 0.4670192|  8.684858|Testing  |
+
+I couldn't recommend any of these, however the ridge model seems least worst;
