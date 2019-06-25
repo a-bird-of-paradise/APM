@@ -32,7 +32,7 @@ Summary of performance is:
 |lasso |RMSE | 2.909513|    NA| 1e-03|       NA|        NA|
 |enet  |RMSE | 2.091352|    NA|    NA|     0.16|        -8|
 
-which would indicate choosing elastic net, although pls and ridge also defensible. linear regression performs pooryl, lasso is OK but outclassed by other models. 
+which would indicate choosing elastic net, although pls and ridge also defensible. linear regression performs poorly, lasso is OK but outclassed by other models. 
 
 ### caret approach
 

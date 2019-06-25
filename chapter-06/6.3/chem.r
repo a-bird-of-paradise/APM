@@ -151,7 +151,7 @@ ggsave(plot = training_plot,
        height = 6,
        dpi = 100)
 
-ggsave(plot = test_plot,
+ggsave(plot = Test_Plot,
        filename = '6.3/test-plot.png',
        width = 9,
        height = 6,
