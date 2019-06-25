@@ -97,3 +97,45 @@ We can compare statistics too:
 |ENet  | 11.45635| 0.4670192|  8.684858|Testing  |
 
 I couldn't recommend any of these, however the ridge model seems least worst;
+
+# 6.3 
+
+OK this is interesting. Fitted an elastic net to the data after pre processing it (centred, scaled, box cox to remvoe skew, imputed using median, removed near zero vars, removed highly correlated vars). 
+Plot of tuning parameter selection: 
+
+![tune](6.3/tune-plot.png)
+
+and of the coefficients:
+
+![coef](6.3/coef-plot.png)
+
+Comparing AvE on the training set gives:
+
+![training](6.3/training-plot.png)
+
+and on the hold out set gives:
+
+![test](6.3/test-plot.png)
+
+Quality of fit on hold out is 
+
+|    RMSE|  Rsquared|       MAE|
+|-------:|---------:|---------:|
+| 1.15099| 0.7594387| 0.9162539|
+
+Looking at the top 6 predictors we get 
+
+|name                   |      value|
+|:----------------------|----------:|
+|ManufacturingProcess32 |  0.5253259|
+|ManufacturingProcess09 |  0.4928388|
+|ManufacturingProcess36 | -0.2942246|
+|ManufacturingProcess06 |  0.1348662|
+|ManufacturingProcess13 | -0.1319899|
+|ManufacturingProcess11 |  0.0945762|
+
+on the transformed scale (due to pre processing, predictors are on the same scale so simple magnitude comparison is OK). 
+
+![scale](6.3/pred-plot.png)
+
+So I would recommend more or less of the industrial processes above. 
