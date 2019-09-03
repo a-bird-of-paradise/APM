@@ -12,3 +12,14 @@ We make some fake data based on a noisy sin(x) curve:
 
 ![fake](7.1/simPlot.png)
 
+Look at how the parameters interplay. Epsilon first:
+
+![epsilon](7.1/svm-e-inv.png)
+
+then cost
+
+![Cost](7.1/svm-c-inv.png)
+
+and then finally sigma in the kernel
+
+![sigma](7.1/svm-s-inv.png)
