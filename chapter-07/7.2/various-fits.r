@@ -40,6 +40,33 @@ ggsave(knn_plot,
        height = 6,
        dpi = 100)
 
+knnTrainSubset <- predictors[1:5]
+knnTestSubset <- testing_predictors[1:5]
+
+knnModelSubset <- caret::train(x = knnTrainSubset,
+                         y = raw_data$y,
+                         method = "knn",
+                         preProc = c("center","scale"),
+                         tuneLength = 10)
+knnPredSubset <- predict(knnModelSubset,knnTestSubset)
+
+postResampTbl <- postResampTbl %>%
+  bind_rows(caret::postResample(pred = knnPredSubset, obs = testing_observations) %>%
+  enframe %>%
+  spread(key=name,value=value) %>%
+  mutate(what = "knn_sub"))
+
+knn_subset_plot <- tibble(obs = testing_observations,
+                   pred = knnPredSubset) %>%
+  ggplot(aes(x=obs,y=pred))+geom_point()+geom_abline()
+
+ggsave(knn_subset_plot,
+       filename = file.path(output_directory,
+                            "knn-subset-pred-plot.png"),
+       width = 8,
+       height = 6,
+       dpi = 100)
+
 # MARS
 
 MARSModel <- caret::train(x = predictors %>% as.data.frame,

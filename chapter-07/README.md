@@ -23,3 +23,55 @@ then cost
 and then finally sigma in the kernel
 
 ![sigma](7.1/svm-s-inv.png)
+
+# Question 7.2 
+
+So we have some fake data and we want to fit some models to it and have a look. Fine. Train models on some data and test them on some other data. 
+
+## k nearest neighbours
+
+![knn](7.2/knn-pred-plot.png)
+
+Doesn't look too great. Look at all that bias. Could be fitting to noise, so (looking ahead and discovering via MARS that only the first five predictors matter) we try fitting to a truncated dataset.
+
+![knn-subset](7.2/knn-subset-pred-plot.png)
+
+Much better. So KNN needs you to trim uninformative predictors. 
+
+## MARS
+
+![mars](7.2/mars-pred-plot.png)
+
+Looks good and reasonably tight too. Get interesting curve shapes for informative predictors:
+
+![mars-v3](7.2/mars-var-3.png)
+
+and flat for uninformative ones: 
+
+![mars-v7](7.2/mars-var-7.png)
+
+useful for trimming predictors to improve KNN!
+
+## SVM
+
+The machines look good too:
+
+![SVM](7.2/svm-pred-plot.png)
+
+## Neural Network
+
+Not great, not terrible. Needed a very long computation too.... 
+
+![AvNNet](7.2/av-nnet-pred-plot.png)
+
+## Summary
+
+|      MAE|     RMSE|  Rsquared|what    |
+|--------:|--------:|---------:|:-------|
+| 2.586877| 3.214339| 0.6575355|knn     |
+| 1.874548| 2.370481| 0.7946572|knn_sub |
+| 1.710491| 2.206143| 0.8012192|avNNet  |
+| 1.646055| 2.116799| 0.8221731|SVM     |
+| 1.413212| 1.798394| 0.8708211|MARS    |
+
+Table says use MARS. Note how KNN got much better when removing uninformative predictors, to the point where it became competitive with SVM and averaged neural networks. 
