@@ -149,7 +149,7 @@ svm_plot <- tibble(obs = testing_observations,
 
 ggsave(svm_plot,
        filename = file.path(output_directory,
-                            "svn-pred-plot.png"),
+                            "svm-pred-plot.png"),
        width = 8,
        height = 6,
        dpi = 100)
@@ -191,4 +191,4 @@ ggsave(av_nnet_plot,
        height = 6,
        dpi = 100)
 
-knitr::kable(postResampTbl)
+knitr::kable(postResampTbl %>% arrange(-RMSE))
