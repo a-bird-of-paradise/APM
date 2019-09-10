@@ -75,3 +75,11 @@ Not great, not terrible. Needed a very long computation too....
 | 1.413212| 1.798394| 0.8708211|MARS    |
 
 Table says use MARS. Note how KNN got much better when removing uninformative predictors, to the point where it became competitive with SVM and averaged neural networks. 
+
+# 7.3 
+
+Usual routine. Cut data 70/30 training/testing, fit models, apply to testing and see if any good. Also try PCAing data first. Get the following outcomes 
+
+![Comparison](7.3/comparison.png)
+
+PCA is a red herring here. I am astonished at how good neural networks are here - I imagine they are homing in on the absorption lines associated with fats. Similarly with MARS (not surprising, to the extent that MARS is a restricted neural network). KNN bad. SVM OK wish I suppose but would want better.
