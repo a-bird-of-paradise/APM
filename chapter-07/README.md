@@ -82,4 +82,4 @@ Usual routine. Cut data 70/30 training/testing, fit models, apply to testing and
 
 ![Comparison](7.3/comparison.png)
 
-PCA is a red herring here. I am astonished at how good neural networks are here - I imagine they are homing in on the absorption lines associated with fats. Similarly with MARS (not surprising, to the extent that MARS is a restricted neural network). KNN bad. SVM OK wish I suppose but would want better.
+PCA is a red herring here. I am astonished at how good neural networks are here - I imagine they are homing in on the absorption lines associated with fats. Similarly with MARS (not surprising, to the extent that MARS is a restricted neural network). KNN bad. SVM OK ish I suppose but would want better.
