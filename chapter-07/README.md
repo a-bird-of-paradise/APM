@@ -83,3 +83,20 @@ Usual routine. Cut data 70/30 training/testing, fit models, apply to testing and
 ![Comparison](7.3/comparison.png)
 
 PCA is a red herring here. I am astonished at how good neural networks are here - I imagine they are homing in on the absorption lines associated with fats. Similarly with MARS (not surprising, to the extent that MARS is a restricted neural network). KNN bad. SVM OK ish I suppose but would want better.
+
+# 7.4
+
+Trying on permeability data. Honestly all of these are bad. Neural network took days to try out (I need a new machine!) and was basically just as good as SVM which took seconds. 
+
+![Comparision](7.4/comparison.png)
+
+![Log Comparison](7.4/comparison-log.png)
+
+|      MAE|     RMSE|  Rsquared|what   |
+|--------:|--------:|---------:|:------|
+| 9.798620| 14.55145| 0.2600800|KNN    |
+| 8.792173| 13.36471| 0.3614898|SVM    |
+| 8.818195| 13.93060| 0.3030681|MARS   |
+| 9.461853| 13.32190| 0.3610646|AvNNet |
+
+None of these models beat penalised linear regression!
