@@ -121,6 +121,7 @@ caret::varImp(MarsModel)$importance %>% rownames_to_column %>% mutate(what = "MA
   bind_rows(caret::varImp(KNNModel)$importance %>% rownames_to_column %>% mutate(what = "KNN") ) %>%
   bind_rows(caret::varImp(SVMModel)$importance %>% rownames_to_column %>% mutate(what = "SVM") ) %>%
   spread(key=what,value=Overall) %>%
-  arrange(-SVM) %>%
+  arrange(-MARS) %>%
+  head(10) %>%
   knitr::kable(.)
 

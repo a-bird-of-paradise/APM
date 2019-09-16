@@ -100,3 +100,34 @@ Trying on permeability data. Honestly all of these are bad. Neural network took 
 | 9.461853| 13.32190| 0.3610646|AvNNet |
 
 None of these models beat penalised linear regression!
+
+# 7.5
+
+And now the chemical process. SVM and MARS beat my penalised linear fits on the RMSE measure but not R-squared. Margins are low and MARS is simple and interpretable so go with that. 
+
+![Comparison](7.5/comparison.png)
+
+|       MAE|     RMSE|  Rsquared|what   |
+|---------:|--------:|---------:|:------|
+| 1.0410348| 1.294035| 0.5133929|KNN    |
+| 0.8700358| 1.112553| 0.6429436|SVM    |
+| 0.9192446| 1.151877| 0.6144647|AvNNet |
+| 0.9642796| 1.128642| 0.6413178|Mars   |
+
+So SVM wins but not by much, really. Looking at predictor importance we find only MARS has meaningful outputs here:
+
+|rowname                |    AvNNet|       KNN|      MARS|       SVM|
+|:----------------------|---------:|---------:|---------:|---------:|
+|ManufacturingProcess32 | 100.00000| 100.00000| 100.00000| 100.00000|
+|ManufacturingProcess09 |  59.60029|  59.60029|  60.37660|  59.60029|
+|BiologicalMaterial11   |  43.87980|  43.87980|  33.10388|  43.87980|
+|ManufacturingProcess17 |  54.71772|  54.71772|  33.10388|  54.71772|
+|BiologicalMaterial01   |  42.51454|  42.51454|   0.00000|  42.51454|
+|BiologicalMaterial03   |  66.63877|  66.63877|   0.00000|  66.63877|
+|BiologicalMaterial05   |  26.73735|  26.73735|   0.00000|  26.73735|
+|BiologicalMaterial06   |  76.05336|  76.05336|   0.00000|  76.05336|
+|BiologicalMaterial08   |  32.53688|  32.53688|   0.00000|  32.53688|
+|BiologicalMaterial09   |  30.41880|  30.41880|   0.00000|  30.41880|
+
+Comparing to the linear fits, MARS also picks up BiologicalMaterial11 but focusses on the process still. Together they give useful insight!
+
