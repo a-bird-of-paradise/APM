@@ -96,3 +96,23 @@ This model seems a bit more robust, especially with two extras, but still steals
 |   10| 14.0| 14.0| 14.0|
 |   11|   NA| 21.0| 21.0|
 |   12|   NA|   NA|  0.0| 
+
+## Exercise 8.2 
+
+Tree bias is the preference of trees to split at very granular factors. So to simulate this I do the following:
+
+* create a process Y = X + N(0,sigma^2); X = 1 or 2 equal probability
+* create noise Z = N(0,sd^2) 
+* fit a one level tree to Y ~ X + Z 
+* Observe where the tree splits, if at all - X or Z?
+* Make a histogram by repeating a bunch of times 
+
+Get the following:
+
+|value |   n|
+|:-----|---:|
+|NULL  |  33|
+|X     | 383|
+|Z     | 584|
+
+So for my choice of variances, the tree naturally prefers splitting at the granular and meaningless one versus the coarse meaningful one. 
