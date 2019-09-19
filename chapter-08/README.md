@@ -147,4 +147,6 @@ No bad
 
 ![cubist](8.4/cubist.png)
 
-No bad either. Fiddling with the parameters didn't really do much!.
+No bad either. Fiddling with the parameters didn't really do much. Some very notable bias against low predictions. 
+
+Overall the forest looks great, and on only one factor too! 
