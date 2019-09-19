@@ -127,3 +127,24 @@ An actual question!
 
 * The further down the tree you go, the more likely a weakly informative factor is to be picked up. So increasing depth will shallow the slope a bit. 
 
+## Exercise 8.4 
+
+Lets look at some fits 
+
+### Simple tree
+
+![tree](8.4/tree.png)
+
+Dreadful
+
+### Random forest
+
+![forest](8.4/rf.png)
+
+No bad
+
+### Cubist
+
+![cubist](8.4/cubist.png)
+
+No bad either. Fiddling with the parameters didn't really do much!.
