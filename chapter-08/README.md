@@ -116,3 +116,14 @@ Get the following:
 |Z     | 584|
 
 So for my choice of variances, the tree naturally prefers splitting at the granular and meaningless one versus the coarse meaningful one. 
+
+## Exercise 8.3
+
+An actual question! 
+
+* So two things going on here. On the right we have a model which almost, but not entirely, follows the prediction at each step when building the tree. This means it will focus on the most predictive factors resulting in fewer factors being material. The one on the left will creep towards an optimal model so will give smallish weights to smallishly material factors. That is the shrinkage effect. Bagging effect - on the right, we are using most of the data to build each step leaving tiny amounts of data to test performance. This means weakly informative factors are gonna be missed. On the left we use most of the data to evaluate performance allowing the model to fit to weakly informative factors. 
+
+* The one on the left will be more predictive. The one on the right might be better for saying what really matters, i.e. for inference. 
+
+* The further down the tree you go, the more likely a weakly informative factor is to be picked up. So increasing depth will shallow the slope a bit. 
+
