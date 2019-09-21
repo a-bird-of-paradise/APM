@@ -162,3 +162,13 @@ We can quantify this looking at the distribution of RMSE from the validation res
 ![rmse_plot](8.5/rmse_plot.png) 
 
 Cubist is good. Maybe not quite as good as the PLS and AvNNet approaches from earlier. 
+
+## Exercise 8.6
+
+Yet again, models don't really work here which is a shame. 
+
+![pred_plot](8.6/pred_plot.png)
+
+![rmse_plot](8.6/rmse_plot.png) 
+
+So models might be useful in conjunction with other analysis. 
