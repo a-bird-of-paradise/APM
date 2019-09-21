@@ -172,3 +172,23 @@ Yet again, models don't really work here which is a shame.
 ![rmse_plot](8.6/rmse_plot.png) 
 
 So models might be useful in conjunction with other analysis. 
+
+## Exercise 8.7 
+
+Let's try some models in the usual way:
+
+![pred_plot](8.7/pred_plot.png)
+
+![rmse_plot](8.7/rmse_plot.png) 
+
+Cubist looks best, others are competitive. Which factors matter for cubist? 
+
+|Variable               |    Overall||:----------------------|----------:||ManufacturingProcess32 | 100.000000||ManufacturingProcess06 |  49.450550||ManufacturingProcess09 |  60.439560||BiologicalMaterial03   |  24.175824||BiologicalMaterial11   |  12.087912||ManufacturingProcess17 |  53.846154||ManufacturingProcess13 |  36.263736||BiologicalMaterial10   |   6.593407||BiologicalMaterial06   |  21.978022||ManufacturingProcess44 |   6.593407|
+
+Compare with the tree structure:
+
+![tree_plot](8.7/tree_plot.png)
+
+Kind of agree. Similar with the linear plots from earlier. 
+
+Regression done. I am so gud at this now. Onto classification ... 
