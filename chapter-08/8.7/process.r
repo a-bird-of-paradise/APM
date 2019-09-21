@@ -111,8 +111,9 @@ ggsave(rmse_plot,
        dpi = 100)
 
 caret::varImp(cubist_model)$importance %>%
-  head(n = 10) %>%
   rownames_to_column("Variable") %>%
+  arrange(desc(Overall)) %>%
+  head(n = 10)  %>%
   knitr::kable(.)
 
 png(filename = file.path(output_folder,"tree_plot.png"),

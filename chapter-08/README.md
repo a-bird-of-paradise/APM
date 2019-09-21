@@ -183,7 +183,7 @@ Let's try some models in the usual way:
 
 Cubist looks best, others are competitive. Which factors matter for cubist? 
 
-|Variable               |    Overall||:----------------------|----------:||ManufacturingProcess32 | 100.000000||ManufacturingProcess06 |  49.450550||ManufacturingProcess09 |  60.439560||BiologicalMaterial03   |  24.175824||BiologicalMaterial11   |  12.087912||ManufacturingProcess17 |  53.846154||ManufacturingProcess13 |  36.263736||BiologicalMaterial10   |   6.593407||BiologicalMaterial06   |  21.978022||ManufacturingProcess44 |   6.593407|
+|Variable               |   Overall||:----------------------|---------:||ManufacturingProcess32 | 100.00000||ManufacturingProcess09 |  60.43956||ManufacturingProcess17 |  53.84615||ManufacturingProcess06 |  49.45055||ManufacturingProcess13 |  36.26374||ManufacturingProcess04 |  31.86813||BiologicalMaterial03   |  24.17582||ManufacturingProcess21 |  23.07692||BiologicalMaterial06   |  21.97802||ManufacturingProcess33 |  20.87912|
 
 Compare with the tree structure:
 
