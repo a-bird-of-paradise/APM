@@ -263,8 +263,32 @@ NSC_BioChem_Conf <- caret::confusionMatrix(predict(NSC_BioChem,
                                                    predict(MidPreProcessorBioChem,TestingPredsBioChem)),
                                            TestingObs)
 
-# OK. Biological models
+# OK.  models
 
-# Chemical models
+metric_table <- function(metric)
+{
+  list(LR = LR_Bio_Conf
+     , LDA = LDA_Bio_Conf
+     , PLSDA = PLSDA_Bio_Conf
+     , NSC = NSC_Bio_Conf
+     ,GLMPen = GLMPen_Bio_Conf) %>%
+  purrr::map_df(~ .x$byClass["Class: None",metric]) %>%
+  mutate(what = "Bio") %>%
+  bind_rows(list(LR = LR_Chem_Conf
+                 , LDA = LDA_Chem_Conf
+                 , PLSDA = PLSDA_Chem_Conf
+                 , NSC = NSC_Chem_Conf
+                 ,GLMPen = GLMPen_Chem_Conf) %>%
+              purrr::map_df(~ .x$byClass["Class: None",metric]) %>%
+              mutate(what = "Chem")) %>%
+  bind_rows(list(LR = LR_BioChem_Conf
+                 , LDA = LDA_BioChem_Conf
+                 , PLSDA = PLSDA_BioChem_Conf
+                 , NSC = NSC_BioChem_Conf
+                 ,GLMPen = GLMPen_BioChem_Conf) %>%
+              purrr::map_df(~ .x$byClass["Class: None",metric]) %>%
+              mutate(what = "BioChem")) 
+}
 
-# Combined models
+metric_table("Neg Pred Value") %>%
+  knitr::kable(.)
