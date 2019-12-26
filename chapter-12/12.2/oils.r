@@ -94,3 +94,46 @@ summary_data %>%
   summarise(group_score = sum(match)/n()) %>%
   summarise(Score = mean(group_score)) %>%
   knitr::kable(.)
+
+nsc_probs <- letters[1:7] %>%
+  toupper %>%
+  `names<-`(.,.) %>%
+  purrr::map_df(~ NSC$finalModel$prob %>%
+                  as_tibble %>%
+                  select(.x) %>%
+                  rename(Prob = 1) %>%
+                  mutate(Obs = TrainingObs %>% as.character) %>%
+                  mutate(bin = pmin(floor(10*Prob),9) + 0.5) %>%
+                  group_by(bin) %>%
+                  summarise(OEP = sum(ifelse(Obs == .x,1.0,0.0))/n()),
+                .id='class'
+  ) %>%
+  ggplot(aes(x = bin, y = OEP, colour = class)) + geom_point() + geom_line()+
+  ggtitle("NSC") +
+  scale_x_continuous(limits = c(0,10))+
+  scale_y_continuous(limits = c(0,1))
+
+glm_probs <- letters[1:7] %>%
+  toupper %>%
+  `names<-`(.,.) %>%
+  purrr::map_df(~ predict(GLM,TrainingPreds,type='prob') %>%
+                  as_tibble %>%
+                  select(.x) %>%
+                  rename(Prob = 1) %>%
+                  mutate(Obs = TrainingObs %>% as.character) %>%
+                  mutate(bin = pmin(floor(10*Prob),9) + 0.5) %>%
+                  group_by(bin) %>%
+                  summarise(OEP = sum(ifelse(Obs == .x,1.0,0.0))/n()),
+                .id='class'
+  ) %>%
+  ggplot(aes(x = bin, y = OEP, colour = class)) + geom_point() + geom_line() +
+  ggtitle("GLM")+
+  scale_x_continuous(limits = c(0,10))+
+  scale_y_continuous(limits = c(0,1))
+
+ggsave(nsc_probs,
+       filename = file.path(output_directory,'nsc_probs.png'),
+       width = 12, height = 8, dpi = 100)
+ggsave(glm_probs,
+       filename = file.path(output_directory,'glm_probs.png'),
+       width = 12, height = 8, dpi = 100)

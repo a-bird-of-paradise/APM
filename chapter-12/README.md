@@ -39,3 +39,9 @@ Values of my custom metric are:
 |PLSDA  | 0.7936508|
 
 so have to use something else as the tie breaker. Why not `ties.method = 'first'`? GLM it is!
+
+Well, no. We can have a look at the probability calibration plots (so: form ten buckets [0%,10%), [10%, 20%), ..., [90%,100%]; map each training observation into a bucket based on its predicted probability by class; compute obserevd probability versus predicted probability). GLM does poorly here, so go for NSC. 
+
+![class](12.2/glm_probs.png)
+
+![class](12.2/nsc_probs.png)
