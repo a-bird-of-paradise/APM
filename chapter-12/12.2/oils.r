@@ -38,7 +38,7 @@ LDA <- caret::train(TrainingPreds,
 PLSDA <- caret::train(TrainingPreds,
                       TrainingObs,
                       method = "pls",
-                      tuneGrid = expand.grid(.ncomp = 1:8),
+                      tuneGrid = expand.grid(.ncomp = 1:8), # PLSDA warns "something is wrong" if you use too many components
                       preProc = c("center","scale"),
                       metric = "Accuracy",
                       trControl = ctrl)
