@@ -185,3 +185,12 @@ ggsave(plot = calibration_plot,
 ggsave(plot = factor_plot,
        filename = file.path(output_directory,'factor_plot.png'),
        width = 12, height = 8, dpi = 100)
+
+lift_stats$data %>%
+  as_tibble %>%
+  filter(CumEventPct >= 80) %>%
+  group_by(liftModelVar) %>%
+  filter(n == min(n))
+
+
+
