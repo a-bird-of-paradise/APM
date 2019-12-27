@@ -77,7 +77,7 @@ Overall performance statistics:
 |name     |   GLM|   LDA| LinReg|   NSC| PLSDA|
 |:--------|-----:|-----:|------:|-----:|-----:|
 |Accuracy | 0.909| 0.901|  0.912| 0.901| 0.902|
-|Kappa    | 0.526| 0.454|  0.551| 0.457| 0.488|
+|Kappa    | 0.526| 0.454|  0.551| 0.457| 0.478|
 
 Kappa is 'occurence adjusted accuracy': as c. 15% of the data churns a dumb 'just say no' model gets 85% accuracy. We want to look at how much extra accuracy the model gives us, which is what the kappa statistic does. So here the old fashioned linear models win. 
 
@@ -85,17 +85,17 @@ Some other statistics:
 
 |name                 |   GLM|   LDA| LinReg|   NSC| PLSDA|
 |:--------------------|-----:|-----:|------:|-----:|-----:|
-|Balanced Accuracy    | 0.716| 0.677|  0.732| 0.679| 0.700|
-|Detection Prevalence | 0.077| 0.064|  0.085| 0.065| 0.077|
-|Detection Rate       | 0.061| 0.050|  0.065| 0.050| 0.057|
-|F1                   | 0.572| 0.502|  0.597| 0.505| 0.538|
-|Neg Pred Value       | 0.920| 0.910|  0.925| 0.910| 0.916|
-|Pos Pred Value       | 0.783| 0.776|  0.773| 0.771| 0.736|
-|Precision            | 0.783| 0.776|  0.773| 0.771| 0.736|
+|Balanced Accuracy    | 0.716| 0.677|  0.732| 0.679| 0.693|
+|Detection Prevalence | 0.077| 0.064|  0.085| 0.065| 0.073|
+|Detection Rate       | 0.061| 0.050|  0.065| 0.050| 0.055|
+|F1                   | 0.572| 0.502|  0.597| 0.505| 0.528|
+|Neg Pred Value       | 0.920| 0.910|  0.925| 0.910| 0.914|
+|Pos Pred Value       | 0.783| 0.776|  0.773| 0.771| 0.752|
+|Precision            | 0.783| 0.776|  0.773| 0.771| 0.752|
 |Prevalence           | 0.134| 0.134|  0.134| 0.134| 0.134|
-|Recall               | 0.451| 0.371|  0.487| 0.375| 0.424|
-|Sensitivity          | 0.451| 0.371|  0.487| 0.375| 0.424|
-|Specificity          | 0.981| 0.983|  0.978| 0.983| 0.976|
+|Recall               | 0.451| 0.371|  0.487| 0.375| 0.406|
+|Sensitivity          | 0.451| 0.371|  0.487| 0.375| 0.406|
+|Specificity          | 0.981| 0.983|  0.978| 0.983| 0.979|
 
 Again Lin Reg and GLM seem to do better by most measures. How to choose between them? Well we can have a look at the lift curve:
 
