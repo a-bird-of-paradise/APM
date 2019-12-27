@@ -152,10 +152,14 @@ calibration_plot <- calibration_stats$data %>%
 
 perf_stats %>%
   spread(key = id, value = value) %>%
-  filter(name %in% c('Accuracy','Kappa'))
+  filter(name %in% c('Accuracy','Kappa')) %>%
+  mutate_if(is.numeric, function(x) round(x,3)) %>%
+  knitr::kable(.)
 
 class_stats %>%
-  spread(key = id, value = value)
+  spread(key = id, value = value) %>%
+  mutate_if(is.numeric, function(x) round(x,3)) %>%
+  knitr::kable(.)
 
 predictor_names <- setdiff(names(datum),c('pred','obs'))
 

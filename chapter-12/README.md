@@ -70,3 +70,43 @@ Very predictive. Also had a look at the states, more because it is pretty than a
 
 ![telecom](12.3/state_plot.png)
 
+Now onto the model fitting. Used a slightly different way of doing the LDA and linear fits which, instead of putting everything in, do a stepwise regression (i.e. start with nothing, put in stuff which makes the AIC go down the most, repeat). Fairly naïve method of model selection but it will do for here (this stuff isn't going into production anywhere). 
+
+Overall performance statistics:
+
+|name     |   GLM|   LDA| LinReg|   NSC| PLSDA|
+|:--------|-----:|-----:|------:|-----:|-----:|
+|Accuracy | 0.909| 0.901|  0.912| 0.901| 0.902|
+|Kappa    | 0.526| 0.454|  0.551| 0.457| 0.488|
+
+Kappa is 'occurence adjusted accuracy': as c. 15% of the data churns a dumb 'just say no' model gets 85% accuracy. We want to look at how much extra accuracy the model gives us, which is what the kappa statistic does. So here the old fashioned linear models win. 
+
+Some other statistics: 
+
+|name                 |   GLM|   LDA| LinReg|   NSC| PLSDA|
+|:--------------------|-----:|-----:|------:|-----:|-----:|
+|Balanced Accuracy    | 0.716| 0.677|  0.732| 0.679| 0.700|
+|Detection Prevalence | 0.077| 0.064|  0.085| 0.065| 0.077|
+|Detection Rate       | 0.061| 0.050|  0.065| 0.050| 0.057|
+|F1                   | 0.572| 0.502|  0.597| 0.505| 0.538|
+|Neg Pred Value       | 0.920| 0.910|  0.925| 0.910| 0.916|
+|Pos Pred Value       | 0.783| 0.776|  0.773| 0.771| 0.736|
+|Precision            | 0.783| 0.776|  0.773| 0.771| 0.736|
+|Prevalence           | 0.134| 0.134|  0.134| 0.134| 0.134|
+|Recall               | 0.451| 0.371|  0.487| 0.375| 0.424|
+|Sensitivity          | 0.451| 0.371|  0.487| 0.375| 0.424|
+|Specificity          | 0.981| 0.983|  0.978| 0.983| 0.976|
+
+Again Lin Reg and GLM seem to do better by most measures. How to choose between them? Well we can have a look at the lift curve:
+
+![lift_curve](12.3/lift_curve.png)
+
+And also the probability calibration curve:
+
+![calibration_plot](12.3/calibration_plot.png)
+
+LinReg looks better calibrated (don't even need to rebalance); GLM looks a bit worse. Lift curve wise it is hard to choose really. So why not Lin Reg as it is simpler? 
+
+Finally we can have a look at how good my new factors are for the selected model. So looks like my lazy attempt at feature engineering made something quite informative:
+
+![factor_plot](12.3/factor_plot.png)
