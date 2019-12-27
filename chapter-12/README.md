@@ -45,3 +45,28 @@ Well, no. We can have a look at the probability calibration plots (so: form ten 
 ![class](12.2/glm_probs.png)
 
 ![class](12.2/nsc_probs.png)
+
+## 12.3 Telecom data 
+
+This is looking at some churn data from a telecoms firm. Apparently. First thing to do is have a look at the data and see if anything obvious jumps out. Some stuff that seems predictive are the following:
+
+![telecom](12.3/total_day_charge.png)
+
+![telecom](12.3/total_day_calls.png)
+
+![telecon](12.3/number_customer_service_calls.png)
+
+The first two are not even remotely well correlated:
+
+![telecom](12.3/total_day_charge_vs_calls_churn.png)
+
+some of the other charge/calls pairs are almost perfecly correlated. Suspect there is something like 'free local calls during daytime' that isn't evident from the data we have. 
+
+Idea: combine the charges to create one master charge thing. This gives us
+
+![telecom](12.3/total_charge.png)
+
+Very predictive. Also had a look at the states, more because it is pretty than anything else: 
+
+![telecom](12.3/state_plot.png)
+
