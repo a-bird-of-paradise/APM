@@ -70,6 +70,29 @@ So the Chem NN is good at spotting any harm (81.8%) and almost as good at spotti
 |C35     |  68.7| 39.1|   68.7|
 |C138    |  45.4| 68.4|   68.4|
 
+## 13.2 Oils
+
+Very similar to last time... both in terms of oil modelling and also of issues with the QDA models. Accuracy stats for the models that worked are:
+
+|name     |   FDA|   KNN|   MDA|    NB|    NN|   SVM|
+|:--------|-----:|-----:|-----:|-----:|-----:|-----:|
+|Accuracy | 0.935| 0.913| 0.935| 0.957| 0.935| 0.717|
+|Kappa    | 0.912| 0.884| 0.912| 0.941| 0.912| 0.611|
+
+so with kappas of 90% or more some of these are very good. (SVM was dreadful!). On a similar basis to the last time we get scores of 
+
+|Model | Score|
+|:-----|-----:|
+|FDA   | 0.937|
+|KNN   | 0.948|
+|MDA   | 0.937|
+|NB    | 0.849|
+|NN    | 0.937|
+|SVM   | 0.498|
+
+so the best ones here are pipped at the post by simpler linear models. This implies the class boundaries are linear. One final look at the plots: 
+
+![class](13.2/oil_fit_plot.png)
 
 
 

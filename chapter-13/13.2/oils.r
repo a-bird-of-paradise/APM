@@ -106,11 +106,14 @@ models %>%
                enframe,
                .id='id') %>%
   filter(name %in% c('Accuracy','Kappa')) %>%
-  spread(key = id, value = value)
+  spread(key = id, value = value) %>%
+  mutate_if(is.numeric, function(x) round(x,digits=3)) %>%
+  knitr::kable(.)
 
 summary_data %>%
   mutate(match = ifelse(match,1.0,0.0)) %>%
   group_by(Model,Obs) %>%
   summarise(group_score = sum(match)/n()) %>%
   summarise(Score = mean(group_score)) %>%
+  mutate_if(is.numeric, function(x) round(x,digits=3)) %>%
   knitr::kable(.)
