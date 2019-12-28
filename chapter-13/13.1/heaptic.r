@@ -277,3 +277,53 @@ NB_BioChem <- caret::train(TrainingPredsBioChem,
                            tuneGrid = expand.grid(.fL = 0:2,
                                                   .usekernel = T,
                                                   .adjust = 1:3))
+
+
+### answers 
+
+list(NN = NN_Bio,
+     FDA = FDA_Bio,
+     SVM = SVM_Bio,
+     KNN = KNN_Bio,
+     NB = NB_Bio) %>%
+  purrr::map_df(~ caret::confusionMatrix(predict(., newdata = TestingPredsBio),
+                                         TestingObs)$overall %>%
+                  enframe,
+                .id='id') %>%
+  filter(name %in% c('Accuracy','Kappa')) %>%
+  spread(key = id, value = value) %>%
+  mutate_if(is.numeric, function(x) signif(x, digits = 3)) %>%
+  knitr::kable(.)
+
+
+list(NN = NN_Chem,
+     FDA = FDA_Chem,
+     SVM = SVM_Chem,
+     KNN = KNN_Chem,
+     NB = NB_Chem) %>%
+  purrr::map_df(~ caret::confusionMatrix(predict(., newdata = TestingPredsChem),
+                                         TestingObs)$overall %>%
+                  enframe,
+                .id='id') %>%
+  filter(name %in% c('Accuracy','Kappa')) %>%
+  spread(key = id, value = value) %>%
+  mutate_if(is.numeric, function(x) signif(x, digits = 3)) %>%
+  knitr::kable(.)
+
+list(NN = NN_BioChem,
+     FDA = FDA_BioChem,
+     SVM = SVM_BioChem,
+     KNN = KNN_BioChem,
+     NB = NB_BioChem) %>%
+  purrr::map_df(~ caret::confusionMatrix(predict(., newdata = TestingPredsBioChem),
+                                         TestingObs)$overall %>%
+                  enframe,
+                .id='id') %>%
+  filter(name %in% c('Accuracy','Kappa')) %>%
+  spread(key = id, value = value) %>%
+  mutate_if(is.numeric, function(x) signif(x, digits = 3)) %>%
+  knitr::kable(.)
+
+caret::confusionMatrix(predict(NN_Chem, TestingPredsChem), TestingObs)
+caret::confusionMatrix(predict(KNN_Bio, TestingPredsBioChem), TestingObs)
+
