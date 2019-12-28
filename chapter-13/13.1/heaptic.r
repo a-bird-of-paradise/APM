@@ -310,6 +310,19 @@ list(NN = NN_Chem,
   mutate_if(is.numeric, function(x) signif(x, digits = 3)) %>%
   knitr::kable(.)
 
+list(NN = NN_Chem,
+     FDA = FDA_Chem,
+     SVM = SVM_Chem,
+     KNN = KNN_Chem,
+     NB = NB_Chem) %>%
+  purrr::map_df(~ caret::confusionMatrix(predict(., newdata = TestingPredsChem),
+                                         TestingObs)$byClass['Class: None',] %>% 
+               enframe,
+               .id='id') %>%
+  spread(key = id, value = value) %>%
+  mutate_if(is.numeric, function(x) signif(x, digits = 3)) %>%
+  knitr::kable(.)
+
 list(NN = NN_BioChem,
      FDA = FDA_BioChem,
      SVM = SVM_BioChem,
@@ -324,6 +337,13 @@ list(NN = NN_BioChem,
   mutate_if(is.numeric, function(x) signif(x, digits = 3)) %>%
   knitr::kable(.)
 
-caret::confusionMatrix(predict(NN_Chem, TestingPredsChem), TestingObs)
+caret::confusionMatrix(predict(NN_Chem, TestingPredsChem), TestingObs) %>% str
 caret::confusionMatrix(predict(KNN_Bio, TestingPredsBioChem), TestingObs)
 
+caret::varImp(NN_Chem)$importance %>%
+  rownames_to_column %>%
+  as_tibble %>% 
+  arrange(-pmax(None,Mild,Severe)) %>%
+  head(n=20) %>%
+  mutate_if(is.numeric, function(x) signif(x, digits = 3)) %>%
+  knitr::kable(.)
