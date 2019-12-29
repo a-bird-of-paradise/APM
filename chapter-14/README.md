@@ -70,3 +70,34 @@ then for split data
 Also we can have a look at one of the decision trees too:
 
 ![tree](14.2/tree_plot.png)
+
+## 14.3 Hepatic Injury 
+
+Fitting the two models shows that the tree based model gives the best answer with `mtry = 75`:
+
+| mtry|  Accuracy|     Kappa| AccuracySD|   KappaSD|what |
+|----:|---------:|---------:|----------:|---------:|:----|
+|   75| 0.5740269| 0.2245286|  0.0372807| 0.0609511|CART |
+|   25| 0.5588245| 0.1723637|  0.0449506| 0.0670967|CF   |
+
+Looking at the times:
+
+```R
+> rfCART$time$everything['elapsed']
+elapsed 
+440.314 
+> rfCForest$times$everything['elapsed']
+elapsed 
+384.778 
+```
+
+So the plain trees are better at the expense of extra compute time. I think the gain is worth it as it's not that much more time consuming. 
+
+Variables in the top 20 for both are 
+```R
+> intersect(t20$CART,t20$CF)
+[1] "X1"   "X132" "X28"  "X120" "X139" "X71"  "X142"
+```
+Not very many! Seems like not enough iterations for convergence or very highly correlated predictors which are being cherry picked at random by the methods. 
+
+![rf](14.3/compare.png)
