@@ -17,10 +17,14 @@ data_t <- AdultUCI %>%
                                                 ifelse(`capital-gain` < 5000, 'Some', 'Lots')))))%>%
   mutate(cap_loss_bin = as_factor(ifelse(is.na(`capital-loss`),NA(),
                                          ifelse(`capital-loss`==0, 'None',
-                                                ifelse(`capital-loss` < 5000, 'Some', 'Lots')))))
-
+                                                ifelse(`capital-loss` < 5000, 'Some', 'Lots'))))) %>%
+  mutate(origin = ifelse(is.na(`native-country`),'Other',
+                                   ifelse(`native-country` == 'United-States','US',
+                                          ifelse(`native-country` == 'Mexico','Mexico','Other'))) %>%
+           as_factor)
 
 summary(data_t)
+
 # want to split data into training / testing using income... 
 
 TrainingIndices <- caret::createDataPartition(y = data_t$income,
@@ -54,4 +58,6 @@ names(TrainingPredictors) %>%
                      filename = file.path(output_directory,
                                           paste0(.x,'.png'))))
 
-paste0('![img](16.1/',names(TrainingPredictors),'.png)\n') %>% cat
+TrainingPredictors
+
+
