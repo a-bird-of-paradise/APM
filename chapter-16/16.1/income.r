@@ -4,6 +4,8 @@ library(arules)
 
 set.seed(8761)
 
+output_directory <- file.path(getwd(),'16.1')
+
 data("AdultUCI")
 
 data_t <- AdultUCI %>%
@@ -32,11 +34,24 @@ TestingOutcome <- data_t[-TrainingIndices,] %>% select(income)
 
 # examine one ways
 
-names(TrainingPredictors)
+plots <- names(TrainingPredictors) %>%
+  `names<-`(.,.) %>%
+  purrr::map(~ tibble(!!.x := TrainingPredictors %>% select(.x) %>% deframe,
+                      y = TrainingOutcome %>% deframe) %>%
+               ggplot(aes(x = get(.x), fill = y, colour = y)) + 
+               geom_bar() + 
+               xlab(.x) +
+               ggtitle(.x))
 
-the_name <- 'hours-per-week'
 
-tibble((!!the_name) := TrainingPredictors %>% select(the_name) %>% deframe,
-       y = TrainingOutcome %>% deframe) %>% 
-  ggplot(aes(fill = y, colour = y, x = get(the_name))) + geom_bar()
 
+names(TrainingPredictors) %>%
+  `names<-`(.,.) %>%
+  purrr::map(~ ggsave(plots[[.x]],
+                     width = 8,
+                     height = 6,
+                     dpi = 100,
+                     filename = file.path(output_directory,
+                                          paste0(.x,'.png'))))
+
+paste0('![img](16.1/',names(TrainingPredictors),'.png)\n') %>% cat
