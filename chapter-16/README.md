@@ -56,3 +56,19 @@ Non-linear relationship with age here. Old and young less likely to have high in
  ![img](16.1/origin.png) 
  
  Binned into US, Mexico (biggest other one) and Everyone Else. 
+ 
+ ### Kappa investigation 
+ 
+ So one thing we could do is strike a balance between sensitivity and specificity. In other words we could goal seek the threshold probability between 'small' and 'large' to get a bigger kappa. Probably means accepting a few more false positives in order to get many more true positives until the ratio peaks. 
+ 
+ Easily done. Well kind of. Turns out we can improve kappa by some few % by choosing the threshold appropriately. As won't be surprising from earlier investigations, sliding the threshold from the default 50% to the right a bit get a better result. There is no a priori reason why 50% is the right number for the default, beyond some vaguely Bayesian reasoning, so we can monkey this as we want. (This is actually quite a significant improvement, c. 5%-10% on a relative basis which is really pretty good). 
+ 
+ XGBoost does very well which it should given how long it takes to train. FDA is a lot quicker and not far off! 
+ 
+ |what    | DefaultKappa| BestCutoff| BestKappa|
+|:-------|------------:|----------:|---------:|
+|XGBoost |    0.5658689|  0.6035340| 0.5902983|
+|FDA     |    0.5488965|  0.6743684| 0.5818072|
+|PLS     |    0.5309859|  0.5749232| 0.5732821|
+|GLM     |    0.5372423|  0.6656615| 0.5669398|
+|LDA     |    0.5344823|  0.7325691| 0.5660098|

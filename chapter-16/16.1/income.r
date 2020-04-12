@@ -332,10 +332,61 @@ lda_func <- purrr::partial(kappa_func, the_model = lda)
 pls_func <- purrr::partial(kappa_func, the_model = pls)
 glm_func <- purrr::partial(kappa_func, the_model = glm)
 
-optimise(xgbt_func,interval = c(0,1), maximum = T)
-optimise(fda_func,interval = c(0,1), maximum = T)
-optimise(lda_func,interval = c(0,1), maximum = T)
-optimise(pls_func,interval = c(0,1), maximum = T)
-optimise(glm_func,interval = c(0,1), maximum = T)
+best_kappa_table <- optimise(xgbt_func,interval = c(0,1), maximum = T) %>% 
+  enframe %>% 
+  unnest(cols = value) %>% 
+  mutate(what = 'XGBoost') %>%
+  bind_rows(optimise(fda_func,interval = c(0,1), maximum = T) %>% 
+              enframe %>% 
+              unnest(cols = value) %>% 
+              mutate(what = 'FDA') ) %>%
+  bind_rows(optimise(lda_func,interval = c(0,1), maximum = T) %>% 
+              enframe %>% 
+              unnest(cols = value) %>% 
+              mutate(what = 'LDA') ) %>%
+  bind_rows(optimise(pls_func,interval = c(0,1), maximum = T) %>% 
+              enframe %>% 
+              unnest(cols = value) %>% 
+              mutate(what = 'PLS') ) %>%
+  bind_rows(optimise(glm_func,interval = c(0,1), maximum = T) %>% 
+              enframe %>% 
+              unnest(cols = value) %>% 
+              mutate(what = 'GLM'))
+
+default_kappa_table <- tibble(Kappa = caret::confusionMatrix(TestingOutcome$income,
+                                                             predict(xgbTree,TestingPredictors_D)) %>%
+                                `$`(overall) %>%
+                                `[[`('Kappa'),
+                              what = 'XGBoost') %>%
+  bind_rows(tibble(Kappa = caret::confusionMatrix(TestingOutcome$income,
+                                                  predict(pls,TestingPredictors_D)) %>%
+                     `$`(overall) %>%
+                     `[[`('Kappa'),
+                   what = 'PLS'))%>%
+  bind_rows(tibble(Kappa = caret::confusionMatrix(TestingOutcome$income,
+                                                  predict(glm,TestingPredictors_D)) %>%
+                     `$`(overall) %>%
+                     `[[`('Kappa'),
+                   what = 'GLM'))%>%
+  bind_rows(tibble(Kappa = caret::confusionMatrix(TestingOutcome$income,
+                                                  predict(fda,TestingPredictors_D)) %>%
+                     `$`(overall) %>%
+                     `[[`('Kappa'),
+                   what = 'FDA'))%>%
+  bind_rows(tibble(Kappa = caret::confusionMatrix(TestingOutcome$income,
+                                                  predict(lda,TestingPredictors_D)) %>%
+                     `$`(overall) %>%
+                     `[[`('Kappa'),
+                   what = 'LDA'))
+
+default_kappa_table %>%
+  dplyr::rename(value = Kappa) %>%
+  mutate(name = 'DefaultKappa') %>%
+  bind_rows(best_kappa_table) %>%
+  spread(key = name, value = value) %>%
+  dplyr::rename(BestCutoff = maximum,
+                BestKappa = objective) %>%
+  arrange(desc(BestKappa)) %>%
+  knitr::kable()
 
 
