@@ -57,6 +57,37 @@ Non-linear relationship with age here. Old and young less likely to have high in
  
  Binned into US, Mexico (biggest other one) and Everyone Else. 
  
+ ### Model fits
+ 
+ I fitted some models. One of them (PLS) turned out to have terrible calibration so I used the sigmoid filter to reweight the probabilities. 
+ 
+ First up is a table of Kappa statistics on the test set. Clearly XGBoost wins (but takes forever to train). 
+ 
+|Model          |     Kappa|
+|:--------------|---------:|
+|PLS            | 0.5309859|
+|LDA            | 0.5344823|
+|GLM            | 0.5372423|
+|PLS-Calibrated | 0.5472139|
+|FDA            | 0.5488965|
+|XGBoost        | 0.5658689|
+ 
+Interestingly the calibration exercise (which takes seconds) gets another 1.7% of Kappa. 
+
+ROC curves also show this - including a zoom on the interesting bit
+
+![ROC](16.1/roc_curves.png)
+![ROC](16.1/roc_curves_zoom.png)
+
+Histograms of class probabilities by model, and also on a log scale:
+
+![Histo](16.1/histo_plots.png)
+![Histo-Log](16.1/histo_plots_log.png)
+
+Finally a calibration plot to prove we have well calibrated probabilities.
+
+![calibration](16.1/calibration_plot.png)
+ 
  ### Kappa investigation 
  
  So one thing we could do is strike a balance between sensitivity and specificity. In other words we could goal seek the threshold probability between 'small' and 'large' to get a bigger kappa. Probably means accepting a few more false positives in order to get many more true positives until the ratio peaks. 
