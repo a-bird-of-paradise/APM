@@ -346,4 +346,228 @@ default_kappa_table %>%
   arrange(desc(BestKappa)) %>%
   knitr::kable()
 
+# OK now lets see if downsampling helps (upsampling will take forever!)
 
+downsampled <- caret::downSample(x = TrainingPredictors_D,
+                  y = TrainingOutcome$income, 
+                  yname = 'income')
+
+TrainingPredictors_D_DS <- downsampled %>% select(-income)
+TrainingOutcome_DS <- downsampled %>% select(income)
+
+
+# GLM ----
+
+glm_DS <- caret::train(TrainingPredictors_D_DS %>% as.data.frame,
+                       TrainingOutcome_DS$income, 
+                    method = 'glm', 
+                    metric = 'Kappa',
+                    trControl = ctrl,
+                    preProcess = c('center','scale','knnImpute','nzv'))
+
+glm_data_DS <- tibble(obs = TestingOutcome$income,
+                   pred = predict(glm_DS,TestingPredictors_D),
+                   IsSmall = ifelse(obs == 'small', 1, 0),
+                   ProbSmall = predict(glm_DS, TestingPredictors_D, type = 'prob')$small,
+                   Bucket = as.integer(ceiling(ProbSmall*20))/20.0,
+                   Model = 'GLM')
+
+# PLS. ----
+
+pls_DS <- caret::train(TrainingPredictors_D_DS,
+                    TrainingOutcome_DS$income,
+                    method = 'pls', 
+                    metric = 'Kappa',
+                    trControl = ctrl,
+                    tuneGrid = expand.grid(.ncomp = 1:10),
+                    preProcess = c('center','scale','knnImpute'))
+
+pls_data_DS <- tibble(obs = TestingOutcome$income,
+                   pred = predict(pls_DS,TestingPredictors_D),
+                   IsSmall = ifelse(obs == 'small', 1, 0),
+                   ProbSmall = predict(pls_DS, TestingPredictors_D, type = 'prob')$small,
+                   Bucket = as.integer(ceiling(ProbSmall*20))/20.0,
+                   Model = 'PLS')
+
+# ignoring calibration issues for now! 
+
+# FDA ----
+
+fda_DS <- caret::train(TrainingPredictors_D_DS,
+                    TrainingOutcome_DS$income,
+                    method = 'fda', 
+                    metric = 'Kappa',
+                    trControl = ctrl)
+
+fda_data_DS <- tibble(obs = TestingOutcome$income,
+                   pred = predict(fda_DS,TestingPredictors_D),
+                   IsSmall = ifelse(obs == 'small', 1, 0),
+                   ProbSmall = predict(fda_DS, TestingPredictors_D, type = 'prob')$small,
+                   Bucket = as.integer(ceiling(ProbSmall*20))/20.0,
+                   Model = 'FDA')
+# lda ----
+
+lda_DS <- caret::train(TrainingPredictors_D_DS,
+                    TrainingOutcome_DS$income,
+                    method = 'lda',
+                    metric = 'Kappa',
+                    trControl = ctrl,
+                    preProcess = c('center','scale','knnImpute','nzv'))
+
+lda_data_DS <- tibble(obs = TestingOutcome$income,
+                   pred = predict(lda_DS,TestingPredictors_D),
+                   IsSmall = ifelse(obs == 'small', 1, 0),
+                   ProbSmall = predict(lda_DS, TestingPredictors_D, type = 'prob')$small,
+                   Bucket = as.integer(ceiling(ProbSmall*20))/20.0,
+                   Model = 'LDA')
+
+# xgboost - later! ----
+
+xgbTree_DS <- caret::train(TrainingPredictors_D_DS,
+                        TrainingOutcome_DS$income,
+                        method = 'xgbTree',
+                        metric = 'Kappa',
+                        trControl = ctrl,
+                        preProcess = c('center','scale','knnImpute','nzv'))
+
+xgbt_data_DS <- tibble(obs = TestingOutcome$income,
+                    pred = predict(xgbTree,TestingPredictors_D),
+                    IsSmall = ifelse(obs == 'small', 1, 0),
+                    ProbSmall = predict(xgbTree, TestingPredictors_D, type = 'prob')$small,
+                    Bucket = as.integer(ceiling(ProbSmall*20))/20.0,
+                    Model = 'XGBoost')
+
+
+# ok let's look at some results ----
+
+all_data_DS <- 
+  glm_data_DS %>%
+  bind_rows(pls_data_DS) %>%
+ # bind_rows(pls_data_calibrated) %>%
+  bind_rows(lda_data_DS) %>%
+  bind_rows(fda_data_DS) %>%
+  bind_rows(xgbt_data_DS)
+
+models_DS <- all_data_DS %>% distinct(Model) %>% pull(Model) %>% `names<-`(.,.)
+
+models_DS %>%
+  purrr::map_df(~ tibble( Kappa = caret::confusionMatrix(all_data_DS %>% 
+                                                           filter(Model == .x) %>% 
+                                                           pull(pred),
+                                                         all_data_DS %>% 
+                                                           filter(Model == .x) %>% 
+                                                           pull(obs))$overall[['Kappa']],
+                          Model = .x)) %>%
+  select(Model,Kappa) %>%
+  arrange(Kappa) %>%
+  knitr::kable()
+
+roc_curves_DS <- all_data_DS %>%
+  ggplot(aes(d = IsSmall, m = ProbSmall, colour = Model)) + 
+  geom_roc(n.cuts = 0) + 
+  geom_abline()
+
+roc_curves_zoom_DS <- roc_curves_DS +
+  scale_x_continuous(limits = c(0.1,0.25)) + 
+  scale_y_continuous(limits = c(0.75,0.9))
+
+histo_plots_DS <- all_data_DS %>%
+  ggplot(aes(x = ProbSmall, fill = obs)) + 
+  geom_histogram(binwidth = 0.01) + 
+  facet_grid(Model ~ obs, scales = 'free')
+
+histo_plots_log_DS <- histo_plots_DS + scale_y_log10()
+
+calibration_plot_DS <- all_data_DS %>%
+  group_by(Bucket,Model) %>%
+  summarise(OEP = sum(ifelse(obs == 'small',1,0)/n()),
+            n=n()) %>%
+  ggplot(aes(x=Bucket,y=OEP, colour = Model)) + 
+  geom_point(aes(size=n)) + 
+  geom_line() + 
+  geom_abline() + 
+  scale_x_continuous(limits=c(0,1),name = "Expected probability of small") + 
+  scale_y_continuous(limits=c(0,1),name = "Actual probability of small")
+
+ggsave(plot = roc_curves_DS,
+       filename = file.path(output_directory, 'roc_curves_DS.png'),
+       width = 8, height = 6, dpi = 100)
+ggsave(plot = roc_curves_zoom_DS,
+       filename = file.path(output_directory, 'roc_curves_zoom_DS.png'),
+       width = 8, height = 6, dpi = 100)
+
+ggsave(plot = histo_plots_DS,
+       filename = file.path(output_directory, 'histo_plots_DS.png'),
+       width = 8, height = 6, dpi = 100)
+ggsave(plot = histo_plots_log_DS,
+       filename = file.path(output_directory, 'histo_plots_log_DS.png'),
+       width = 8, height = 6, dpi = 100)
+
+ggsave(plot = calibration_plot_DS,
+       filename = file.path(output_directory, 'calibration_plot_DS.png'),
+       width = 8, height = 6, dpi = 100)
+
+# phew. now mess with the cutoffs 
+
+xgbt_func_DS <- purrr::partial(kappa_func, the_model = xgbTree) ####
+fda_func_DS <- purrr::partial(kappa_func, the_model = fda_DS)
+lda_func_DS <- purrr::partial(kappa_func, the_model = lda_DS)
+pls_func_DS <- purrr::partial(kappa_func, the_model = pls_DS)
+glm_func_DS <- purrr::partial(kappa_func, the_model = glm_DS)
+
+best_kappa_table_DS <- optimise(xgbt_func_DS,interval = c(0,1), maximum = T) %>% 
+  enframe %>% 
+  unnest(cols = value) %>% 
+  mutate(what = 'XGBoost') %>%
+  bind_rows(optimise(fda_func_DS,interval = c(0,1), maximum = T) %>% 
+              enframe %>% 
+              unnest(cols = value) %>% 
+              mutate(what = 'FDA') ) %>%
+  bind_rows(optimise(lda_func_DS,interval = c(0,1), maximum = T) %>% 
+              enframe %>% 
+              unnest(cols = value) %>% 
+              mutate(what = 'LDA') ) %>%
+  bind_rows(optimise(pls_func_DS,interval = c(0,1), maximum = T) %>% 
+              enframe %>% 
+              unnest(cols = value) %>% 
+              mutate(what = 'PLS') ) %>%
+  bind_rows(optimise(glm_func_DS,interval = c(0,1), maximum = T) %>% 
+              enframe %>% 
+              unnest(cols = value) %>% 
+              mutate(what = 'GLM'))
+
+default_kappa_table_DS <- tibble(Kappa = caret::confusionMatrix(TestingOutcome$income,
+                                                             predict(xgbTree,TestingPredictors_D)) %>%
+                                `$`(overall) %>%
+                                `[[`('Kappa'),
+                              what = 'XGBoost') %>%
+  bind_rows(tibble(Kappa = caret::confusionMatrix(TestingOutcome$income,
+                                                  predict(pls_DS,TestingPredictors_D)) %>%
+                     `$`(overall) %>%
+                     `[[`('Kappa'),
+                   what = 'PLS'))%>%
+  bind_rows(tibble(Kappa = caret::confusionMatrix(TestingOutcome$income,
+                                                  predict(glm_DS,TestingPredictors_D)) %>%
+                     `$`(overall) %>%
+                     `[[`('Kappa'),
+                   what = 'GLM'))%>%
+  bind_rows(tibble(Kappa = caret::confusionMatrix(TestingOutcome$income,
+                                                  predict(fda_DS,TestingPredictors_D)) %>%
+                     `$`(overall) %>%
+                     `[[`('Kappa'),
+                   what = 'FDA'))%>%
+  bind_rows(tibble(Kappa = caret::confusionMatrix(TestingOutcome$income,
+                                                  predict(lda_DS,TestingPredictors_D)) %>%
+                     `$`(overall) %>%
+                     `[[`('Kappa'),
+                   what = 'LDA'))
+
+default_kappa_table_DS %>%
+  dplyr::rename(value = Kappa) %>%
+  mutate(name = 'DefaultKappa') %>%
+  bind_rows(best_kappa_table_DS) %>%
+  spread(key = name, value = value) %>%
+  dplyr::rename(BestCutoff = maximum,
+                BestKappa = objective) %>%
+  arrange(desc(BestKappa)) %>%
+  knitr::kable()

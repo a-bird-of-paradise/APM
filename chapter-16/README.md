@@ -105,3 +105,29 @@ Finally a calibration plot to prove we have well calibrated probabilities.
 |PLS     |    0.5309859|  0.5749232| 0.5732821|
 |GLM     |    0.5372423|  0.6656615| 0.5669398|
 |LDA     |    0.5344823|  0.7325691| 0.5660098|
+
+### Downsampling
+
+OK so the main issue seems to be that large incomes are rare so models are biased. We can work around this by downsampling i.e. chucking away data until large and small are balanced. We actually get marginally better results most of the time - some few % more kappa. Models fit faster too. So if you have huge data sets with serious imbalance issues then try resampling the training data. 
+
+(Didn't redo XGBoost fit as that takes hours; also didn't calibrate probabilites and there are some issues there too it seems!) 
+
+Tuning for Kappa gets e.g. a PLS model that's almost as good as the (un-downsampled!!!) XGBoost model. Default performance is a bit better for most too. 
+
+|what    | DefaultKappa| BestCutoff| BestKappa|
+|:-------|------------:|----------:|---------:|
+|XGBoost |    0.5658689|  0.6035340| 0.5902983|
+|PLS     |    0.5466449|  0.4605979| 0.5843185|
+|FDA     |    0.5449138|  0.2816574| 0.5839429|
+|GLM     |    0.5581132|  0.3783177| 0.5722413|
+|LDA     |    0.5347545|  0.3394593| 0.5624107|
+
+Here are some more plots. Note the calibration issues. 
+
+![ROC](16.1/roc_curves_DS.png)
+![ROC](16.1/roc_curves_zoom_DS.png)
+![Histo](16.1/histo_plots_DS.png)
+![Histo-Log](16.1/histo_plots_log_DS.png)
+![calibration](16.1/calibration_plot_DS.png)
+ 
+The models which admit costs take too long to run so not tried those. I can imagine e.g. c5.0 doing well if we penalise the 'right' kind of mistake more than the others. 
