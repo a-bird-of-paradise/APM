@@ -193,8 +193,6 @@ xgbTree <- caret::train(TrainingPredictors_D,
                         trControl = ctrl,
                         preProcess = c('center','scale','knnImpute','nzv'))
 
-saveRDS(xgbTree,'xgbTree.rds')
-
 xgbt_data <- tibble(obs = TestingOutcome$income,
                     pred = predict(xgbTree,TestingPredictors_D),
                     IsSmall = ifelse(obs == 'small', 1, 0),
@@ -214,7 +212,7 @@ all_data <-
 
 models <- all_data %>% distinct(Model) %>% pull(Model) %>% `names<-`(.,.)
 
-models %>%
+base_kappa <- models %>%
   purrr::map_df(~ tibble( Kappa = caret::confusionMatrix(all_data %>% 
                                                            filter(Model == .x) %>% 
                                                            pull(pred),
@@ -223,8 +221,10 @@ models %>%
                                                            pull(obs))$overall[['Kappa']],
                           Model = .x)) %>%
   select(Model,Kappa) %>%
-  arrange(Kappa) %>%
-  knitr::kable()
+  arrange(Kappa) 
+
+base_kappa %>% write_csv(file.path(output_directory, 'base-kappa.csv'))
+
 
 roc_curves <- all_data %>%
   ggplot(aes(d = IsSmall, m = ProbSmall, colour = Model)) + 
@@ -336,15 +336,16 @@ default_kappa_table <- tibble(Kappa = caret::confusionMatrix(TestingOutcome$inco
                      `[[`('Kappa'),
                    what = 'LDA'))
 
-default_kappa_table %>%
+tuned_kappa_table <- default_kappa_table %>%
   dplyr::rename(value = Kappa) %>%
   mutate(name = 'DefaultKappa') %>%
   bind_rows(best_kappa_table) %>%
   spread(key = name, value = value) %>%
   dplyr::rename(BestCutoff = maximum,
                 BestKappa = objective) %>%
-  arrange(desc(BestKappa)) %>%
-  knitr::kable()
+  arrange(desc(BestKappa)) 
+
+tuned_kappa_table %>% write_csv(file.path(output_directory,'tuned-kappa-table.csv'))
 
 # OK now lets see if downsampling helps (upsampling will take forever!)
 
@@ -431,9 +432,9 @@ xgbTree_DS <- caret::train(TrainingPredictors_D_DS,
                         preProcess = c('center','scale','knnImpute','nzv'))
 
 xgbt_data_DS <- tibble(obs = TestingOutcome$income,
-                    pred = predict(xgbTree,TestingPredictors_D),
+                    pred = predict(xgbTree_DS,TestingPredictors_D),
                     IsSmall = ifelse(obs == 'small', 1, 0),
-                    ProbSmall = predict(xgbTree, TestingPredictors_D, type = 'prob')$small,
+                    ProbSmall = predict(xgbTree_DS, TestingPredictors_D, type = 'prob')$small,
                     Bucket = as.integer(ceiling(ProbSmall*20))/20.0,
                     Model = 'XGBoost')
 
@@ -509,7 +510,7 @@ ggsave(plot = calibration_plot_DS,
 
 # phew. now mess with the cutoffs 
 
-xgbt_func_DS <- purrr::partial(kappa_func, the_model = xgbTree) ####
+xgbt_func_DS <- purrr::partial(kappa_func, the_model = xgbTree_DS) ####
 fda_func_DS <- purrr::partial(kappa_func, the_model = fda_DS)
 lda_func_DS <- purrr::partial(kappa_func, the_model = lda_DS)
 pls_func_DS <- purrr::partial(kappa_func, the_model = pls_DS)
@@ -537,7 +538,7 @@ best_kappa_table_DS <- optimise(xgbt_func_DS,interval = c(0,1), maximum = T) %>%
               mutate(what = 'GLM'))
 
 default_kappa_table_DS <- tibble(Kappa = caret::confusionMatrix(TestingOutcome$income,
-                                                             predict(xgbTree,TestingPredictors_D)) %>%
+                                                             predict(xgbTree_DS,TestingPredictors_D)) %>%
                                 `$`(overall) %>%
                                 `[[`('Kappa'),
                               what = 'XGBoost') %>%
@@ -562,12 +563,19 @@ default_kappa_table_DS <- tibble(Kappa = caret::confusionMatrix(TestingOutcome$i
                      `[[`('Kappa'),
                    what = 'LDA'))
 
-default_kappa_table_DS %>%
+tuned_kappa_table_DS <- default_kappa_table_DS %>%
   dplyr::rename(value = Kappa) %>%
   mutate(name = 'DefaultKappa') %>%
   bind_rows(best_kappa_table_DS) %>%
   spread(key = name, value = value) %>%
   dplyr::rename(BestCutoff = maximum,
                 BestKappa = objective) %>%
-  arrange(desc(BestKappa)) %>%
-  knitr::kable()
+  arrange(desc(BestKappa)) 
+
+tuned_kappa_table_DS %>% write_csv(file.path(output_directory,'tuned-kappa-table-DS.csv'))
+
+# dump knits
+
+knitr::kable(base_kappa)
+knitr::kable(tuned_kappa_table)
+knitr::kable(tuned_kappa_table_DS)
