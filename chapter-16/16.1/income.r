@@ -111,31 +111,12 @@ glm <- caret::train(TrainingPredictors_D %>% as.data.frame,
                     trControl = ctrl,
                     preProcess = c('center','scale','knnImpute','nzv'))
 
-caret::confusionMatrix(TestingOutcome$income,predict(glm,TestingPredictors_D))
-
-tibble(IsSmall = ifelse(TestingOutcome$income == 'small',1,0),
-       ProbSmall = predict(glm,TestingPredictors_D,type = 'prob')$small) %>%
-  ggplot(aes(d = IsSmall, m = ProbSmall)) + geom_roc() + geom_abline()
-
-tibble(obs = TestingOutcome$income,
-       ProbSmall = predict(glm,TestingPredictors_D,type='prob')$small) %>%
-  ggplot(aes(x = ProbSmall, fill = obs)) + 
-  geom_histogram(binwidth = 0.01) + 
-  facet_grid(obs ~ ., scales = 'free')
-
-tibble(obs = TestingOutcome$income,
-       ProbSmall = predict(glm,TestingPredictors_D,type='prob')$small,
-       Bucket = as.integer(ceiling(ProbSmall*20))/20.0) %>%
-  group_by(Bucket) %>%
-  summarise(OEP = sum(ifelse(obs == 'small',1,0)/n()),
-            n=n()) %>%
-  ggplot(aes(x=Bucket,y=OEP)) + 
-  geom_point(aes(size=n)) + 
-  geom_line() + 
-  geom_abline() + 
-  scale_x_continuous(limits=c(0,1),name = "Expected probability of small") + 
-  scale_y_continuous(limits=c(0,1),name = "Actual probability of small")
-
+glm_data <- tibble(obs = TestingOutcome$income,
+                   pred = predict(glm,TestingPredictors_D),
+                   IsSmall = ifelse(obs == 'small', 1, 0),
+                   ProbSmall = predict(glm, TestingPredictors_D, type = 'prob')$small,
+                   Bucket = as.integer(ceiling(ProbSmall*20))/20.0,
+                   Model = 'GLM')
 
 # PLS. ----
 
@@ -147,18 +128,12 @@ pls <- caret::train(TrainingPredictors_D,
                     tuneGrid = expand.grid(.ncomp = 1:10),
                     preProcess = c('center','scale','knnImpute'))
 
-tibble(obs = TestingOutcome$income,
-       ProbSmall = predict(pls,TestingPredictors_D,type='prob')$small,
-       Bucket = as.integer(ceiling(ProbSmall*20))/20.0) %>%
-  group_by(Bucket) %>%
-  summarise(OEP = sum(ifelse(obs == 'small',1,0)/n()),
-            n=n()) %>%
-  ggplot(aes(x=Bucket,y=OEP)) + 
-  geom_point(aes(size=n)) + 
-  geom_line() + 
-  geom_abline() + 
-  scale_x_continuous(limits=c(0,1),name = "Expected probability of small") + 
-  scale_y_continuous(limits=c(0,1),name = "Actual probability of small")
+pls_data <- tibble(obs = TestingOutcome$income,
+                   pred = predict(pls,TestingPredictors_D),
+                   IsSmall = ifelse(obs == 'small', 1, 0),
+                   ProbSmall = predict(pls, TestingPredictors_D, type = 'prob')$small,
+                   Bucket = as.integer(ceiling(ProbSmall*20))/20.0,
+                   Model = 'PLS')
 
 # calibration issues, so try again 
 
@@ -169,46 +144,15 @@ pls_sigmoid <- glm(class ~ pls_prob,
                    data = pls_calib_data %>% mutate(class = fct_relevel(class, 'large','small')),
                    family = 'binomial') 
 
-tibble(obs = TestingOutcome$income,
-       ProbSmall = predict(pls_sigmoid,
-                           newdata = tibble(pls_prob = 
-                                              predict(pls,TestingPredictors_D, type = 'prob')$small),
-                           type = 'response'),
-       Bucket = as.integer(ceiling(ProbSmall*20))/20.0) %>%
-  group_by(Bucket) %>%
-  summarise(OEP = sum(ifelse(obs == 'small',1,0)/n()),
-            n=n()) %>%
-  ggplot(aes(x=Bucket,y=OEP)) + 
-  geom_point(aes(size=n)) + 
-  geom_line() + 
-  geom_abline() + 
-  scale_x_continuous(limits=c(0,1),name = "Expected probability of small") + 
-  scale_y_continuous(limits=c(0,1),name = "Actual probability of small")
+pls_data_calibrated <- pls_data %>%
+  mutate(ProbSmall = predict(pls_sigmoid, newdata = tibble(class = obs,
+                                                           pls_prob = ProbSmall),
+                             type = 'response'),
+         pred = factor(ifelse(ProbSmall >= 0.5, 'small', 'large'), levels = c('small','large')),
+         IsSmall = ifelse(obs == 'small', 1, 0),
+         Bucket = as.integer(ceiling(ProbSmall*20))/20.0,
+         Model = 'PLS-Calibrated')
 
-# better 
-
-caret::confusionMatrix(TestingOutcome$income,ifelse(predict(pls_sigmoid,
-                                                            newdata = tibble(pls_prob = 
-                                                                               predict(pls,TestingPredictors_D, type = 'prob')$small),
-                                                            type = 'response') >= 0.5, 
-                                                    'small',
-                                                    'large') %>% as_factor)
-
-tibble(IsSmall = ifelse(TestingOutcome$income == 'small',1,0),
-       ProbSmall = predict(pls_sigmoid,
-                           newdata = tibble(pls_prob = 
-                                              predict(pls,TestingPredictors_D, type = 'prob')$small),
-                           type = 'response')) %>%
-  ggplot(aes(d = IsSmall, m = ProbSmall)) + geom_roc() + geom_abline()
-
-tibble(obs = TestingOutcome$income,
-       ProbSmall = predict(pls_sigmoid,
-                           newdata = tibble(pls_prob = 
-                                              predict(pls,TestingPredictors_D, type = 'prob')$small),
-                           type = 'response')) %>%
-  ggplot(aes(x = ProbSmall, fill = obs)) + 
-  geom_histogram(binwidth = 0.01) + 
-  facet_grid(obs ~ ., scales = 'free')
 
 # FDA ----
 
@@ -218,31 +162,12 @@ fda <- caret::train(TrainingPredictors_D,
                     metric = 'Kappa',
                     trControl = ctrl)
 
-caret::confusionMatrix(TestingOutcome$income,predict(fda,TestingPredictors_D))
-
-tibble(IsSmall = ifelse(TestingOutcome$income == 'small',1,0),
-       ProbSmall = predict(fda,TestingPredictors_D,type = 'prob')$small) %>%
-  ggplot(aes(d = IsSmall, m = ProbSmall)) + geom_roc() + geom_abline()
-
-tibble(obs = TestingOutcome$income,
-       ProbSmall = predict(fda,TestingPredictors_D,type='prob')$small) %>%
-  ggplot(aes(x = ProbSmall, fill = obs)) + 
-  geom_histogram(binwidth = 0.01) + 
-  facet_grid(obs ~ ., scales = 'free')
-
-tibble(obs = TestingOutcome$income,
-       ProbSmall = predict(fda,TestingPredictors_D,type='prob')$small,
-       Bucket = as.integer(ceiling(ProbSmall*20))/20.0) %>%
-  group_by(Bucket) %>%
-  summarise(OEP = sum(ifelse(obs == 'small',1,0)/n()),
-            n=n()) %>%
-  ggplot(aes(x=Bucket,y=OEP)) + 
-  geom_point(aes(size=n)) + 
-  geom_line() + 
-  geom_abline() + 
-  scale_x_continuous(limits=c(0,1),name = "Expected probability of small") + 
-  scale_y_continuous(limits=c(0,1),name = "Actual probability of small")
-
+fda_data <- tibble(obs = TestingOutcome$income,
+                   pred = predict(fda,TestingPredictors_D),
+                   IsSmall = ifelse(obs == 'small', 1, 0),
+                   ProbSmall = predict(fda, TestingPredictors_D, type = 'prob')$small,
+                   Bucket = as.integer(ceiling(ProbSmall*20))/20.0,
+                   Model = 'FDA')
 # lda ----
 
 lda <- caret::train(TrainingPredictors_D,
@@ -252,31 +177,12 @@ lda <- caret::train(TrainingPredictors_D,
                     trControl = ctrl,
                     preProcess = c('center','scale','knnImpute','nzv'))
 
-
-caret::confusionMatrix(TestingOutcome$income,predict(lda,TestingPredictors_D))
-
-tibble(IsSmall = ifelse(TestingOutcome$income == 'small',1,0),
-       ProbSmall = predict(lda,TestingPredictors_D,type = 'prob')$small) %>%
-  ggplot(aes(d = IsSmall, m = ProbSmall)) + geom_roc() + geom_abline()
-
-tibble(obs = TestingOutcome$income,
-       ProbSmall = predict(lda,TestingPredictors_D,type='prob')$small) %>%
-  ggplot(aes(x = ProbSmall, fill = obs)) + 
-  geom_histogram(binwidth = 0.01) + 
-  facet_grid(obs ~ ., scales = 'free')
-
-tibble(obs = TestingOutcome$income,
-       ProbSmall = predict(lda,TestingPredictors_D,type='prob')$small,
-       Bucket = as.integer(ceiling(ProbSmall*20))/20.0) %>%
-  group_by(Bucket) %>%
-  summarise(OEP = sum(ifelse(obs == 'small',1,0)/n()),
-            n=n()) %>%
-  ggplot(aes(x=Bucket,y=OEP)) + 
-  geom_point(aes(size=n)) + 
-  geom_line() + 
-  geom_abline() + 
-  scale_x_continuous(limits=c(0,1),name = "Expected probability of small") + 
-  scale_y_continuous(limits=c(0,1),name = "Actual probability of small")
+lda_data <- tibble(obs = TestingOutcome$income,
+                   pred = predict(lda,TestingPredictors_D),
+                   IsSmall = ifelse(obs == 'small', 1, 0),
+                   ProbSmall = predict(lda, TestingPredictors_D, type = 'prob')$small,
+                   Bucket = as.integer(ceiling(ProbSmall*20))/20.0,
+                   Model = 'LDA')
 
 # xgboost ----
 
@@ -289,30 +195,81 @@ xgbTree <- caret::train(TrainingPredictors_D,
 
 saveRDS(xgbTree,'xgbTree.rds')
 
-caret::confusionMatrix(TestingOutcome$income,predict(xgbTree,TestingPredictors_D))
+xgbt_data <- tibble(obs = TestingOutcome$income,
+                    pred = predict(xgbTree,TestingPredictors_D),
+                    IsSmall = ifelse(obs == 'small', 1, 0),
+                    ProbSmall = predict(xgbTree, TestingPredictors_D, type = 'prob')$small,
+                    Bucket = as.integer(ceiling(ProbSmall*20))/20.0,
+                    Model = 'XGBoost')
 
-tibble(IsSmall = ifelse(TestingOutcome$income == 'small',1,0),
-       ProbSmall = predict(xgbTree,TestingPredictors_D,type = 'prob')$small) %>%
-  ggplot(aes(d = IsSmall, m = ProbSmall)) + geom_roc() + geom_abline()
+# ok let's look at some results ----
 
-tibble(obs = TestingOutcome$income,
-       ProbSmall = predict(xgbTree,TestingPredictors_D,type='prob')$small) %>%
+all_data <- 
+  glm_data %>%
+  bind_rows(pls_data) %>%
+  bind_rows(pls_data_calibrated) %>%
+  bind_rows(lda_data) %>%
+  bind_rows(fda_data) %>%
+  bind_rows(xgbt_data)
+
+models <- all_data %>% distinct(Model) %>% pull(Model) %>% `names<-`(.,.)
+
+models %>%
+  purrr::map_df(~ tibble( Kappa = caret::confusionMatrix(all_data %>% 
+                                                           filter(Model == .x) %>% 
+                                                           pull(pred),
+                                                         all_data %>% 
+                                                           filter(Model == .x) %>% 
+                                                           pull(obs))$overall[['Kappa']],
+                          Model = .x)) %>%
+  select(Model,Kappa) %>%
+  arrange(Kappa) %>%
+  knitr::kable()
+
+roc_curves <- all_data %>%
+  ggplot(aes(d = IsSmall, m = ProbSmall, colour = Model)) + 
+  geom_roc(n.cuts = 0) + 
+  geom_abline()
+
+roc_curves_zoom <- roc_curves +
+  scale_x_continuous(limits = c(0.1,0.25)) + 
+  scale_y_continuous(limits = c(0.75,0.9))
+
+histo_plots <- all_data %>%
   ggplot(aes(x = ProbSmall, fill = obs)) + 
   geom_histogram(binwidth = 0.01) + 
-  facet_grid(obs ~ ., scales = 'free')
+  facet_grid(Model ~ obs, scales = 'free')
 
-tibble(obs = TestingOutcome$income,
-       ProbSmall = predict(xgbTree,TestingPredictors_D,type='prob')$small,
-       Bucket = as.integer(ceiling(ProbSmall*20))/20.0) %>%
-  group_by(Bucket) %>%
+histo_plots_log <- histo_plots + scale_y_log10()
+
+calibration_plot <- all_data %>%
+  group_by(Bucket,Model) %>%
   summarise(OEP = sum(ifelse(obs == 'small',1,0)/n()),
             n=n()) %>%
-  ggplot(aes(x=Bucket,y=OEP)) + 
+  ggplot(aes(x=Bucket,y=OEP, colour = Model)) + 
   geom_point(aes(size=n)) + 
   geom_line() + 
   geom_abline() + 
   scale_x_continuous(limits=c(0,1),name = "Expected probability of small") + 
   scale_y_continuous(limits=c(0,1),name = "Actual probability of small")
+
+ggsave(plot = roc_curves,
+       filename = file.path(output_directory, 'roc_curves.png'),
+       width = 8, height = 6, dpi = 100)
+ggsave(plot = roc_curves_zoom,
+       filename = file.path(output_directory, 'roc_curves_zoom.png'),
+       width = 8, height = 6, dpi = 100)
+
+ggsave(plot = histo_plots,
+       filename = file.path(output_directory, 'histo_plots.png'),
+       width = 8, height = 6, dpi = 100)
+ggsave(plot = histo_plots_log,
+       filename = file.path(output_directory, 'histo_plots_log.png'),
+       width = 8, height = 6, dpi = 100)
+
+ggsave(plot = calibration_plot,
+       filename = file.path(output_directory, 'calibration_plot.png'),
+       width = 8, height = 6, dpi = 100)
 
 # phew. now mess with the cutoffs 
 
