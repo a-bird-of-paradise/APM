@@ -84,6 +84,8 @@ Histograms of class probabilities by model, and also on a log scale:
 ![Histo](16.1/histo_plots.png)
 ![Histo-Log](16.1/histo_plots_log.png)
 
+These show that the best models really do a good job of picking out samples with small income, but the distribution for large income is very uniform. So are the models being biased by the initial data volume? 
+
 Finally a calibration plot to prove we have well calibrated probabilities.
 
 ![calibration](16.1/calibration_plot.png)
