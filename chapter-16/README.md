@@ -70,7 +70,7 @@ Non-linear relationship with age here. Old and young less likely to have high in
 |GLM            | 0.5372423|
 |PLS-Calibrated | 0.5472139|
 |FDA            | 0.5488965|
-|XGBoost        | 0.5658689|
+|XGBoost        | 0.5630757|
  
 Interestingly the calibration exercise (which takes seconds) gets another 1.7% of Kappa. 
 
@@ -98,9 +98,9 @@ Finally a calibration plot to prove we have well calibrated probabilities.
  
  XGBoost does very well which it should given how long it takes to train. FDA is a lot quicker and not far off! 
  
- |what    | DefaultKappa| BestCutoff| BestKappa|
+|what    | DefaultKappa| BestCutoff| BestKappa|
 |:-------|------------:|----------:|---------:|
-|XGBoost |    0.5658689|  0.6035340| 0.5902983|
+|XGBoost |    0.5630757|  0.6146755| 0.5946793|
 |FDA     |    0.5488965|  0.6743684| 0.5818072|
 |PLS     |    0.5309859|  0.5749232| 0.5732821|
 |GLM     |    0.5372423|  0.6656615| 0.5669398|
@@ -108,19 +108,17 @@ Finally a calibration plot to prove we have well calibrated probabilities.
 
 ### Downsampling
 
-OK so the main issue seems to be that large incomes are rare so models are biased. We can work around this by downsampling i.e. chucking away data until large and small are balanced. We actually get marginally better results most of the time - some few % more kappa. Models fit faster too. So if you have huge data sets with serious imbalance issues then try resampling the training data. 
+OK so the main issue seems to be that large incomes are rare so models are biased. We can work around this by downsampling i.e. chucking away data until large and small are balanced. Doesn't seem to be too effective in this instance but worth a shot nonetheless. 
 
-(Didn't redo XGBoost fit as that takes hours; also didn't calibrate probabilites and there are some issues there too it seems!) 
-
-Tuning for Kappa gets e.g. a PLS model that's almost as good as the (un-downsampled!!!) XGBoost model. Default performance is a bit better for most too. 
+Tuning for Kappa gets better performance, markedly so in some instances. FDA went weird. 
 
 |what    | DefaultKappa| BestCutoff| BestKappa|
 |:-------|------------:|----------:|---------:|
-|XGBoost |    0.5658689|  0.6035340| 0.5902983|
-|PLS     |    0.5466449|  0.4605979| 0.5843185|
-|FDA     |    0.5449138|  0.2816574| 0.5839429|
-|GLM     |    0.5581132|  0.3783177| 0.5722413|
-|LDA     |    0.5347545|  0.3394593| 0.5624107|
+|XGBoost |    0.5544337|  0.3468401| 0.5932938|
+|PLS     |    0.5448712|  0.4450144| 0.5778164|
+|GLM     |    0.5539478|  0.3650493| 0.5704134|
+|LDA     |    0.5368149|  0.3998095| 0.5661040|
+|FDA     |    0.4097108|  0.3820119| 0.4097108|
 
 Here are some more plots. Note the calibration issues. 
 
