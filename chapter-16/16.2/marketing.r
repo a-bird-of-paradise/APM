@@ -122,7 +122,7 @@ ctrl_NoProb <- caret::trainControl(method = 'cv',
 Training_Data_DS <- downSample_custom(Training_Data %>% select(-RESP),
                                       Training_Data %>% pull(RESP),
                                       yname = 'RESP',
-                                      frac = 0.2)
+                                      frac = 0.5)
 
 rel_cost <- 20
 costs <- matrix(c(0,rel_cost,1,0), 
