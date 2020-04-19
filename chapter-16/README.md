@@ -147,5 +147,5 @@ Did both a proportionate split and a very agressive downsampling of the undesire
 
 Built a load of models. Downsampling does make a difference in some cases: 
 
-
 ![lift_plot](16.2/lift_plot.png)
+![model_plot](16.2/model_plot.png)

@@ -380,10 +380,14 @@ lift_data <- for_lift_data %>%
   separate(model, into = c('model','type'), fill = 'right') %>%
   mutate(type = ifelse(is.na(type),'Full',type))
 
-lift_data %>%
+model_plot <- lift_data %>%
   ggplot(aes(x = pc_tested, y = pc_found, colour = type)) + 
   geom_line() + 
   facet_wrap(~model)
+
+ggsave(plot = model_plot, 
+       filename = file.path(output_directory, 'model_plot.png'),
+       width = 8, height = 8, dpi = 100)
 
 lift_plot <- lift_data %>%
   ggplot(aes(x = pc_tested, y = pc_found, colour = model)) + 
