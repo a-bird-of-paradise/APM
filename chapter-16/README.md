@@ -129,3 +129,15 @@ Here are some more plots. Note the calibration issues.
 ![calibration](16.1/calibration_plot_DS.png)
  
 The models which admit costs take too long to run so not tried those. I can imagine e.g. c5.0 doing well if we penalise the 'right' kind of mistake more than the others. 
+
+## 16.2 
+
+So this was interesting. Downloaded data from the link and plugged it in. Constructed some one way plots and correlations. There are some highly informative predictors:
+
+![FRE](16.2/FRE.png)
+![PROMOS](16.2/PROMOS.png)
+
+correlation structure shows lots of clustering etc to worry about too:
+
+![corr_plot](16.2/corr_plot.png)
+
