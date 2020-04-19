@@ -385,8 +385,13 @@ lift_data %>%
   geom_line() + 
   facet_wrap(~model)
 
-lift_data %>%
-  ggplot(aes(x = pc_tested, y = pc_found, colour = model)) + geom_line(aes(linetype = type))
+lift_plot <- lift_data %>%
+  ggplot(aes(x = pc_tested, y = pc_found, colour = model)) + 
+  geom_line(aes(linetype = type))
+
+ggsave(plot = lift_plot, 
+       filename = file.path(output_directory, 'lift_plot.png'),
+       width = 8, height = 8, dpi = 100)
 
 for_lift_data %>%
   select(-obs) %>%
