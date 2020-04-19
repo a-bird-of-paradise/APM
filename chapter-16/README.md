@@ -150,4 +150,25 @@ Built a load of models. Downsampling does make a difference in some cases:
 ![lift_plot](16.2/lift_plot.png)
 ![model_plot](16.2/model_plot.png)
 
-In terms of percentage to find 60% of custs, the best is glm trained on the full data set (21.3%). So a little over twice as many contacts as needed (as perfect model needs 10.0%). 
+In terms of percentage to find 60% of custs, the best is fda trained on the full data set (20.7%). So a little over twice as many contacts as needed (as perfect model needs 10.0%). 
+
+|model   |        DS|      Full|
+|:-------|---------:|---------:|
+|perfect |        NA| 0.0996780|
+|fda     | 0.2246588| 0.2073302|
+|C50     | 0.2243521| 0.2102438|
+|glm     | 0.2307928| 0.2133108|
+|rf      | 0.2297194| 0.2166846|
+|glmnet  | 0.2297194| 0.2287993|
+|tree    | 0.3497930| 0.2291060|
+|mda     | 0.2332464| 0.2375403|
+|pls     | 0.2245054| 0.2386137|
+|lda     | 0.2315596| 0.2407606|
+|qda     | 0.2611563| 0.2518019|
+|J48     | 0.3556203| 0.2534887|
+|nb      | 0.2525686| 0.2541021|
+|random  |        NA| 0.6009814|
+
+One option not explored is monkeying with the 50% cutoff. Might be something in it. Could trade false positives for fewer false negs (and vice versa).
+
+![thresh_plot](16.2/thresh_plot.png)
