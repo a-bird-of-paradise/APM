@@ -134,20 +134,20 @@ colnames(costs) <- levels(Training_Data$RESP)
 glm <- caret::train(RESP ~ .,
                     data = Training_Data,
                     method = 'glm', 
-                    metric = 'Profit',
+                    metric = 'Kappa',
                     trControl = ctrl,
                     preProcess = c('center','scale','knnImpute','nzv','corr'))
 glm_DS <- caret::train(RESP ~ .,
                        data = Training_Data_DS,
                        method = 'glm', 
-                       metric = 'Profit',
+                       metric = 'Kappa',
                        trControl = ctrl,
                        preProcess = c('center','scale','knnImpute','nzv','corr'))
 
 glmnet <- caret::train(RESP ~ .,
                        data = Training_Data,
                        method = 'glmnet', 
-                       metric = 'Profit',
+                       metric = 'Kappa',
                        trControl = ctrl,
                        preProcess = c('center','scale','knnImpute','nzv','corr'),
                        tuneGrid = expand.grid(.alpha = seq(0,0.2, length = 5),
@@ -156,7 +156,7 @@ glmnet <- caret::train(RESP ~ .,
 glmnet_DS <- caret::train(RESP ~ .,
                           data = Training_Data_DS,
                           method = 'glmnet', 
-                          metric = 'Profit',
+                          metric = 'Kappa',
                           trControl = ctrl,
                           preProcess = c('center','scale','knnImpute','nzv','corr'),
                           tuneGrid = expand.grid(.alpha = seq(0,0.2, length = 5),
@@ -165,14 +165,14 @@ glmnet_DS <- caret::train(RESP ~ .,
 pls <- caret::train(RESP ~ .,
                     data = Training_Data,
                     method = 'pls', 
-                    metric = 'Profit',
+                    metric = 'Kappa',
                     trControl = ctrl,
                     preProcess = c('center','scale'),
                     tuneLength = 15)
 pls_DS <- caret::train(RESP ~ .,
                        data = Training_Data_DS,
                        method = 'pls', 
-                       metric = 'Profit',
+                       metric = 'Kappa',
                        trControl = ctrl,
                        preProcess = c('center','scale'),
                        tuneLength = 15)
@@ -180,35 +180,35 @@ pls_DS <- caret::train(RESP ~ .,
 lda <- caret::train(RESP ~ .,
                     data = Training_Data,
                     method = 'lda', 
-                    metric = 'Profit',
+                    metric = 'Kappa',
                     trControl = ctrl,
                     preProcess = c('nzv'))
 
 lda_DS <- caret::train(RESP ~ .,
                        data = Training_Data_DS,
                        method = 'lda', 
-                       metric = 'Profit',
+                       metric = 'Kappa',
                        trControl = ctrl,
                        preProcess = c('nzv'))
 
 qda <- caret::train(RESP ~ .,
                     data = Training_Data,
                     method = 'qda', 
-                    metric = 'Profit',
+                    metric = 'Kappa',
                     trControl = ctrl,
                     preProcess = c('nzv'))
 
 qda_DS <- caret::train(RESP ~ .,
                        data = Training_Data_DS,
                        method = 'qda', 
-                       metric = 'Profit',
+                       metric = 'Kappa',
                        trControl = ctrl,
                        preProcess = c('nzv'))
 
 fda <- caret::train(RESP ~ .,
                     data = Training_Data,
                     method = 'fda', 
-                    metric = 'Profit',
+                    metric = 'Kappa',
                     trControl = ctrl,
                     preProcess = c('center','scale'),
                     tuneGrid = expand.grid(.nprune = c(2, 8, 14, 25),
@@ -217,7 +217,7 @@ fda <- caret::train(RESP ~ .,
 fda_DS <- caret::train(RESP ~ .,
                        data = Training_Data_DS,
                        method = 'fda', 
-                       metric = 'Profit',
+                       metric = 'Kappa',
                        trControl = ctrl,
                        preProcess = c('center','scale'),
                        tuneGrid = expand.grid(.nprune = c(2, 8, 14, 25),
@@ -226,14 +226,14 @@ fda_DS <- caret::train(RESP ~ .,
 mda <- caret::train(RESP ~ .,
                     data = Training_Data,
                     method = 'mda', 
-                    metric = 'Profit',
+                    metric = 'Kappa',
                     trControl = ctrl,
                     preProcess = c('center','scale'),
                     tuneGrid = expand.grid(.subclasses = 1:20)) # more helps but slow
 mda_DS <- caret::train(RESP ~ .,
                        data = Training_Data_DS,
                        method = 'mda', 
-                       metric = 'Profit',
+                       metric = 'Kappa',
                        trControl = ctrl,
                        preProcess = c('center','scale'),
                        tuneGrid = expand.grid(.subclasses = 1:20)) # more helps but slow
@@ -241,77 +241,77 @@ mda_DS <- caret::train(RESP ~ .,
 nb <- caret::train(RESP ~ .,
                    data = Training_Data,
                    method = 'nb', 
-                   metric = 'Profit',
+                   metric = 'Kappa',
                    trControl = ctrl,
                    preProcess = c('nzv'))
 
 nb_DS <- caret::train(RESP ~ .,
                       data = Training_Data_DS,
                       method = 'nb', 
-                      metric = 'Profit',
+                      metric = 'Kappa',
                       trControl = ctrl,
                       preProcess = c('nzv'))
 
 tree <- caret::train(RESP ~ .,
                      data = Training_Data,
                      method = 'rpart1SE', 
-                     metric = 'Profit',
+                     metric = 'Kappa',
                      trControl = ctrl)
 
 tree_DS <- caret::train(RESP ~ .,
                         data = Training_Data_DS,
                         method = 'rpart1SE', 
-                        metric = 'Profit',
+                        metric = 'Kappa',
                         trControl = ctrl)
 
 J48 <- caret::train(RESP ~ .,
                     data = Training_Data,
                     method = 'J48', 
-                    metric = 'Profit',
+                    metric = 'Kappa',
                     trControl = ctrl)
 
 J48_DS <- caret::train(RESP ~ .,
                        data = Training_Data_DS,
                        method = 'J48', 
-                       metric = 'Profit',
+                       metric = 'Kappa',
                        trControl = ctrl)
 
 C5.0 <- caret::train(RESP ~ .,
                      data = Training_Data,
                      method = 'C5.0', 
-                     metric = 'Profit',
+                     metric = 'Kappa',
                      trControl = ctrl)
 
 C5.0_DS <- caret::train(RESP ~ .,
                         data = Training_Data_DS,
                         method = 'C5.0', 
-                        metric = 'Profit',
+                        metric = 'Kappa',
                         trControl = ctrl)
 
 C5.0Cost <- caret::train(RESP ~ .,
                          data = Training_Data,
                          method = 'C5.0', 
-                         metric = 'Profit',
+                         metric = 'Kappa',
                          trControl = ctrl_NoProb,
                          cost = costs)
 
 C5.0Cost_DS <- caret::train(RESP ~ .,
                             data = Training_Data,
                             method = 'C5.0', 
-                            metric = 'Profit',
+                            metric = 'Kappa',
                             trControl = ctrl_NoProb,
                             cost = costs)
 
 rf <- caret::train(RESP ~ .,
                    data = Training_Data,
                    method = 'rf', 
-                   metric = 'Profit',
+                   metric = 'Kappa',
                    trControl = ctrl)
 
 rf_DS <- caret::train(RESP ~ .,
                       data = Training_Data_DS,
                       method = 'rf', 
-                      metric = 'Profit',
+                      metric = 'Kappa',
                       trControl = ctrl)
 
 
@@ -408,21 +408,51 @@ lift_data %>%
   filter(pc_tested == min(pc_tested)) %>%
   select(model,type,pc_tested) %>%
   spread(key = type, value = pc_tested) %>%
-  arrange(Full)
+  arrange(Full) %>%
+  knitr::kable(.)
 
-thresholds <- expand_grid( p =  seq(0.01,0.99, by = 0.01) ,
-                           model = model_names) %>%
-  filter(!model %in% c('C5.0Cost','C5.0Cost_DS'))
+thresholds <- seq(0.01,0.99, by = 0.01) %>% `names<-`(.,.)
 
-keep <- setdiff(caret::thresholder(eval(as.name(zzz)),0.3) %>%
-                  names,
-                c('degree','nprune'))
+models <- setdiff(for_lift_data %>% names,
+        c('obs','perfect','random')) %>%
+  `names<-`(.,.)
 
-threshold_investigation <- purrr::map2_df( thresholds$model,
-                                           thresholds$p,
-                                           ~ caret::thresholder(eval(as.name(.x)),.y) %>%
-                                             select_if(names(.) %in% keep) %>%
-                                             mutate(model = .x)) %>%
-  as_tibble
+the_list <- expand.grid(thesholds = thresholds,models=models) %>% 
+  as_tibble %>%
+  mutate_if(is.factor,as.character)
 
+my_summary_func <- function(m_, t_)
+{  
+  for_lift_data %>%
+    select(obs, prob = m_) %>%
+    mutate(pred = ifelse(prob >= t_, 'true','false'),
+           TN = obs == 'false' & pred == 'false',
+           FN = obs == 'true' & pred == 'false',
+           TP = obs == 'true' & pred == 'true',
+           FP = obs == 'false' & pred == 'true') %>%
+    select(TN,FN,TP,FP) %>%
+    gather %>%
+    mutate(value = ifelse(value,1,0)) %>%
+    group_by(key) %>%
+    summarise(value = sum(value)/n()) %>%
+    mutate(model = m_, threshold = t_)
+}
 
+threshold_investigation <- purrr::map2_df(the_list$models,
+            the_list$thesholds,
+            my_summary_func)
+
+thresh_plot <- threshold_investigation %>%
+  spread(key = key, value = value) %>%
+  mutate(sensitivity = TP / (TP + FN),
+         specificity = TN / (TN + FP)) %>%
+  separate(model, c('model','type')) %>%
+  mutate(type = ifelse(is.na(type),'Full','DS')) %>%
+  select(model,type,threshold,sensitivity,specificity) %>% 
+  gather(key = measure, value = value, -model, -type, -threshold) %>%
+  ggplot(aes(x = threshold, y = value, colour = measure)) + 
+  geom_line(aes(linetype = type)) + facet_wrap(~ model)
+
+ggsave(plot = thresh_plot, 
+       filename = file.path(output_directory, 'thresh_plot.png'),
+       width = 8, height = 8, dpi = 100)
