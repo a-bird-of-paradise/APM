@@ -149,3 +149,5 @@ Built a load of models. Downsampling does make a difference in some cases:
 
 ![lift_plot](16.2/lift_plot.png)
 ![model_plot](16.2/model_plot.png)
+
+In terms of percentage to find 60% of custs, the best is glm trained on the full data set (21.3%). So a little over twice as many contacts as needed (as perfect model needs 10.0%). 
