@@ -417,6 +417,9 @@ models <- setdiff(for_lift_data %>% names,
         c('obs','perfect','random')) %>%
   `names<-`(.,.)
 
+plot(partykit::as.party(tree$finalModel))
+plot(partykit::as.party(tree_DS$finalModel))
+
 the_list <- expand.grid(thesholds = thresholds,models=models) %>% 
   as_tibble %>%
   mutate_if(is.factor,as.character)
