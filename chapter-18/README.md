@@ -70,4 +70,43 @@ So with mutliple output classes we get differing importances by class and predic
 
 ![img](18.2/answer.png)
 
+## 18.3
+
+So. Abalone. Or ormer as I call them. 
+
+The dataset looks vaguely the same most of the time - the bigger, the more rings:
+
+![img](18.3/Diameter.png)
+
+Could maybe put quadratics in for some features. But not now. They're all very highly correlated:
+
+![img](18.3/corr_plot.png)
+
+Variable importance is interesting. Type (i.e. child or not) matters, all the bigness is very similar. 
+
+|rowname       |    Overall|
+|:-------------|----------:|
+|Type          | 28.7688124|
+|Height        |  1.9227583|
+|ShellWeight   |  0.5892443|
+|Diameter      |  0.5379761|
+|WholeWeight   |  0.5337033|
+|LongestShell  |  0.5305664|
+|ShuckedWeight |  0.5060171|
+|VisceraWeight |  0.1533918|
+
+Looks like basically one thing of bigness and one of type (maybe) will matter. PCA suggests one numeric predictor will be enough for 95% of the variance: 
+
+    Standard deviations (1, .., p=7):
+    [1] 0.58152448 0.06296055 0.05392322 0.03247929 0.02212835 0.02065884 0.01217135
+    
+    Rotation (n x k) = (7 x 7):
+                         PC1         PC2         PC3          PC4         PC5           PC6          PC7
+    LongestShell  0.19315606  0.35006929 -0.65543596 -0.038784599  0.15584501 -0.0005606153 -0.620285186
+    Diameter      0.15955208  0.31882074 -0.50547308  0.018060452  0.07483574  0.0302034552  0.781379947
+    Height        0.05928271  0.13475175 -0.08607958  0.004683252 -0.92444847  0.3377048831 -0.047395498
+    WholeWeight   0.84261922  0.01882402  0.31147028 -0.127977156  0.16797945  0.3846953125 -0.006247874
+    ShuckedWeight 0.37195895 -0.70343169 -0.33727250  0.353767145 -0.16244383 -0.3184028855  0.012572505
+    VisceraWeight 0.18225102  0.01294771  0.02506135 -0.762977566 -0.20728245 -0.5828809182  0.033732861
+    ShellWeight   0.22834926  0.51216078  0.30999426  0.523911759 -0.13392483 -0.5439869513 -0.033321509
 
