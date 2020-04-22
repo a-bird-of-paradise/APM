@@ -63,3 +63,11 @@ joint ones are
 Can plot together. Very similar but as Relief is a joint measure some correlated things drop in importance.
 
 ![img](18.1/compare_plot.png)
+
+## 18.2
+
+So with mutliple output classes we get differing importances by class and predictor:
+
+![img](18.2/answer.png)
+
+
