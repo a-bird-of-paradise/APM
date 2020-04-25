@@ -12,3 +12,5 @@ Redoing all the RFE stuff gets us this:
 ![img](19.1/conv_plot.png)
 
 So get better performance in many instances by throwing away uselessly redundant predictors. But some models are able to use the slightly different predictors meaningfully.
+
+Note that for some models I flattened the factor into dummy vars and for other models I did not. so not quite apples to apples. deal with it. 
