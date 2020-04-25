@@ -168,3 +168,7 @@ conv_plot <- RFEs %>%
 ggsave(plot = conv_plot,
        file = file.path(output_dir,'conv_plot.png'),
        width = 8, height = 6, dpi = 100)
+
+RFEs %>%
+  purrr::map_df( ~ .x$results %>% select(Variables,ROC), .id='id') %>%
+  write_csv(file.path(output_dir,'answers.csv'))
