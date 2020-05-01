@@ -172,3 +172,5 @@ ggsave(plot = conv_plot,
 RFEs %>%
   purrr::map_df( ~ .x$results %>% select(Variables,ROC), .id='id') %>%
   write_csv(file.path(output_dir,'answers.csv'))
+
+lrRFE$fit
