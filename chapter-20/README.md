@@ -51,3 +51,20 @@ so high specificity and not very impressive sensitivities imply that the middle 
 Finally we can have a look at how the class probabilities compare. Haven't calibrated these probabilities so don't want to get mugged by spurious clustering but I do like the spread you get along the x axis with 2 factor SVM. 
 
 ![img](20.2/plot.png)
+
+## 20.3 
+
+This is an interesting one. So one problem in practice is that your data set can be thinly spread through predictor space, so when you divide into training and test sets your test set involves some extrapolation (i.e., unreliable predictions). So how do you determine whether your test set is within your model's training space? 
+
+This is a cunning algo to do it:
+
+ * tune a model 
+ * create fake samplse from the training space by sampling from it, smearing predictors everywhere
+ * tune another model, this time on actual vs fake training data
+ * apply this second model to the original test set and look at the probabilities for being in real data
+
+Doing this with the solubility data gives the following density plot of P(test data is in training set):
+
+![img](20.3/plot.png)
+
+So here no test data is >50% to be fake, which is reassuring. Couple of points get close! 
