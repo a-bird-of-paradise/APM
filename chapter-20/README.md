@@ -58,8 +58,8 @@ This is an interesting one. So one problem in practice is that your data set can
 
 This is a cunning algo to do it:
 
- * tune a model 
- * create fake samplse from the training space by sampling from it, smearing predictors everywhere
+ * tune a model on the training set
+ * create fake samples from the training space by sampling from it, smearing predictors everywhere
  * tune another model, this time on actual vs fake training data
  * apply this second model to the original test set and look at the probabilities for being in real data
 
