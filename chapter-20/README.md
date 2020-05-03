@@ -68,3 +68,19 @@ Doing this with the solubility data gives the following density plot of P(test d
 ![img](20.3/plot.png)
 
 So here no test data is >50% to be fake, which is reassuring. Couple of points get close! 
+
+## 20.4
+
+Last Q! Celebrate! 
+
+OK. Repeated the algo with the fat data. Some of the test set were not correctly predicted. Why? 
+
+Well look at the PCA. Make a PCA object off the test set and apply it to the training data. We can plot the test set in PCA space and overlay where the training data is. Look at PC1 vs PC3:
+
+![img](20.4/plot2.png)
+
+So the training set does not cover where the mishits were (for one missed point it loosely covers it). So extrapolation is causing the problem here. 
+
+This is really a low n problem. Take more samples of the data so the training set is enough to cover the test set in component space. 
+
+book complete. thank you for reading!
