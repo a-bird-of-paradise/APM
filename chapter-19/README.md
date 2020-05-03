@@ -1,5 +1,7 @@
 # Chapter 19
 
+This has very intensive computations and my ancient laptop cannot handle them. So I did not complete the entire chapter. RFE seems like something to apply when you have too many factors to reasonably investigate. 
+
 ## 19.1 
 
 So initially there is loads of predictors:
